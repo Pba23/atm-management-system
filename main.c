@@ -3,7 +3,7 @@
 #include "auth.c"
 void mainMenu(struct User u)
 {
-   
+
     int option;
     system("clear");
     printf("\n\n\t\t======= ATM =======\n\n");
@@ -83,9 +83,9 @@ void initMenu(struct User *u)
             r = 1;
             break;
         case 2:
+         registerMenu(u->name, u->password);
             // student TODO : add your **Registration** function
             // here
-            r = 1;
             break;
         case 3:
             exit(1);
@@ -95,10 +95,10 @@ void initMenu(struct User *u)
         }
     }
 };
-
+//  struct User *users = readUserData("./data.users", 2);
 int main()
 {
-    struct User u;
+       struct User u;
 
     initMenu(&u);
     mainMenu(u);
