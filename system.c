@@ -163,3 +163,94 @@ void checkAllAccounts(struct User u)
     fclose(pf);
     success(u);
 }
+void updateAccountMenuAgain(struct User u)
+{
+
+    char userName[100];
+    struct Record r;
+    int id;
+    FILE *pf = fopen(RECORDS, "r");
+
+    system("clear");
+    printf("\t\t====== Update account, %s =====\n\n", u.name);
+    printf("\n\n\n\n\n\t\t\t\t✖ count not found!!\n");
+    printf("\nEnter your account number again:");
+    int counter;
+    scanf("%d", &id);
+    while (getAccountFromFile(pf, userName, &r))
+    {
+        if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
+        {
+            // printf("bonjour");
+            counter++;
+        }
+    }
+    if (counter == 0)
+    {
+        updateAccountMenuAgain(u);
+    }
+}
+void updateAccountMenu(struct User u)
+{
+    int i = 0;
+    char input[10];
+    char userName[100];
+    struct Record r;
+    int id;
+    FILE *pf = fopen(RECORDS, "r");
+t:
+    system("clear");
+    printf("\t\t====== Update account, %s =====\n\n", u.name);
+    printf("\n\n\n\n\n\t\t\t\tEnter your account number:");
+    int counter;
+    scanf("%d", &id);
+    while (getAccountFromFile(pf, userName, &r))
+    {
+        if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
+        {
+            printf("\n\t\t-->> What would you update / register :\n");
+            printf("\n\t\t[1]- phone number\n");
+            printf("\n\t\t[2]- country\n");
+            printf("Choose an option: ");
+            while (!i)
+            {
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+
+                // Vérifier si la chaîne contient uniquement des chiffres
+                int isNumeric = 1;
+                for (int i = 0; input[i] != '\0'; i++)
+                {
+                    if (input[i] < '0' || input[i] > '9')
+                    {
+                        isNumeric = 0;
+                        break;
+                    }
+                }
+
+                if (isNumeric)
+                {
+                    int option = atoi(input);
+
+                    switch (option)
+                    {
+                    case 1:
+                        i = 1;
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        printf("Choose a valid option: ");
+                        break;
+                    }
+                }
+                
+            }
+            counter++;
+        }
+    }
+    if (counter == 0)
+    {
+        updateAccountMenuAgain(u);
+    }
+}
