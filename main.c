@@ -31,15 +31,13 @@ void mainMenu(struct User u)
         updateAccountMenu(u);
         break;
     case 3:
-        // student TODO : add your **Check the details of existing accounts** function
-        // here
+        countDetail(u);
         break;
     case 4:
         checkAllAccounts(u);
         break;
     case 5:
-        // student TODO : add your **Make transaction** function
-        // here
+        transactionMenu(u);
         break;
     case 6:
         // student TODO : add your **Remove existing account** function
@@ -61,7 +59,8 @@ void mainMenu(struct User u)
 #include <stdlib.h>
 #include <string.h>
 
-void initMenu(struct User *u) {
+void initMenu(struct User *u)
+{
     int r = 0;
     char input[10]; // Tableau de caractères pour stocker l'entrée de l'utilisateur
 
@@ -73,48 +72,59 @@ void initMenu(struct User *u) {
     printf("\n\t\t[3]- exit\n");
 
     printf("Choose an option: ");
-    while (!r) {
+    while (!r)
+    {
         fgets(input, sizeof(input), stdin);
         input[strcspn(input, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
 
         // Vérifier si la chaîne contient uniquement des chiffres
         int isNumeric = 1;
-        for (int i = 0; input[i] != '\0'; i++) {
-            if (input[i] < '0' || input[i] > '9') {
+        for (int i = 0; input[i] != '\0'; i++)
+        {
+            if (input[i] < '0' || input[i] > '9')
+            {
                 isNumeric = 0;
                 break;
             }
         }
 
-        if (isNumeric) {
+        if (isNumeric)
+        {
             int option = atoi(input);
 
-            switch (option) {
-                case 1:
-                    loginMenu(u->name, u->password);
-                    if (strcmp(u->password, getPassword(*u)) == 0) {
-                        printf("\n\nPassword Match!\n");
-                    } else {
-                        printf("\nWrong password or User Name\n");
-                        exit(1);
-                    }
-                    r = 1;
-                    break;
-                case 2:
-                    registerMenu(u->name, u->password);
-                    break;
-                case 3:
+            switch (option)
+            {
+            case 1:
+                loginMenu(u->name, u->password);
+                if (strcmp(u->password, getPassword(*u)) == 0)
+                {
+                    printf("\n\nPassword Match!\n");
+                }
+                else
+                {
+                    printf("\nWrong password or User Name\n");
                     exit(1);
-                    break;
-                default:
-                     printf("Choose a valid option: ");
-                    break;
+                }
+                r = 1;
+                break;
+            case 2:
+                registerMenu(u->name, u->password);
+                break;
+            case 3:
+                exit(1);
+                break;
+            default:
+                printf("Choose a valid option: ");
+                break;
             }
-        }else {
-             printf("Choose a valid option: ");
+        }
+        else
+        {
+            printf("Choose a valid option: ");
         }
     }
 }
+
 
 //  struct User *users = readUserData("./data.users", 2);
 int main()
