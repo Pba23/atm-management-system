@@ -83,26 +83,29 @@ void checkIn(struct User users[], int *numUsers)
 }
 
 // Fonction pour enregistrer un nouvel utilisateur et le stocker dans le fichier
-void registerUser(struct User users[], int *numUsers, const char *name, const char *password) {
+void registerUser(struct User users[], int *numUsers, const char *name, const char *password)
+{
     // ... (comme précédemment)
 
     // Ouvrir le fichier en mode écriture
     FILE *fp = fopen("data/users.txt", "w");
 
-    if (fp == NULL) {
+    if (fp == NULL)
+    {
         printf("Erreur lors de l'ouverture du fichier\n");
         exit(1);
     }
 
     // Écrire les données dans le fichier
-    for (int i = 0; i < *numUsers; i++) {
+    for (int i = 0; i < *numUsers; i++)
+    {
         fprintf(fp, "%d %s %s\n", users[i].id, users[i].name, users[i].password);
     }
 
     // Fermer le fichier
     fclose(fp);
 
-    printf("Registration success for the user : %s\n", name);
+    printf("✔Registration success for the user : %s\n", name);
 }
 int userExists(struct User users[], int numUsers, const char *name)
 {
@@ -127,19 +130,102 @@ void registerMenu(char a[50], char pass[50])
         scanf("%s", a);
         if (userExists(users, numUsers, a))
         {
-           printf("\n\n\t\t\t\tThis name already exists enter another:");
-        }else {
+            printf("\n\n\t\t\t\tThis name already exists enter another:");
+        }
+        else
+        {
             break;
         }
     }
     printf("\n\n\n\n\n\t\t\t\tEnter the password to login:");
-    scanf("%s",pass);
+    scanf("%s", pass);
 
     // Ajoutez le nouvel utilisateur au tableau
     users[numUsers].id = numUsers; // Vous pouvez assigner l'ID de manière incrémentielle si nécessaire
     strcpy(users[numUsers].name, a);
-    strcpy(users[numUsers].password,pass);
+    strcpy(users[numUsers].password, pass);
     (numUsers)++; // Incrémentez le nombre d'utilisateurs
-  registerUser(users, &numUsers, a, pass);
-    
+    registerUser(users, &numUsers, a, pass);
+}
+void transferOwner(struct User u)
+{
+    int numRecords;
+    struct Record r[100];
+    int accountID;
+    int count = 0;
+    struct User users[100];
+    int numUsers;
+    char username[50];
+    getAllRecords(r, &numRecords);
+    system("clear");
+    printf("\n\n\t\tEnter the id of the account you want to transfer ownership : ");
+
+    if (scanf("%d", &accountID) != 1)
+    {
+        printf("Invalid input. Please enter a valid option.\n");
+        while (getchar() != '\n')
+            ; // Vide le tampon d'entrée
+    }
+    for (int i = 0; i < numRecords; i++)
+    {
+        if (strcmp(r[i].name, u.name) == 0 && r[i].id == accountID)
+        {
+            count++;
+            printf("\t\t\t\t====Transfering your account number: %d\n\n", r[i].id);
+            printf("Account number: %d\n", r[i].accountNbr);
+            printf("Deposit Date: %d/%d/%d\n", r[i].deposit.day, r[i].deposit.month, r[i].deposit.year);
+            printf("Country: %s\n", r[i].country);
+            printf("Phone number: %d\n", r[i].phone);
+            printf("Amount deposited: %.2f\n", r[i].amount);
+            printf("Type Of Account : %s\n", r[i].accountType);
+        }
+    }
+
+    if (count == 0)
+    {
+        printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
+        stayOrQuit(u);
+    }
+    else
+    {
+        checkIn(users, &numUsers);
+        printf("Which user you wantg to tranfer ownership (user name): ");
+        scanf("%s", username);
+        if (!userExists(users, numUsers, username))
+        {
+            printf("\n\n\t\tThis user does'nt exist\n");
+        }
+        else
+        {
+
+            FILE *fp;
+            char filename[] = "./data/records.txt";
+
+            if ((fp = fopen(filename, "w")) == NULL)
+            {
+                printf("Error oppenning file : %s\n", filename);
+                return;
+            }
+            for (int i = 0; i < numRecords; i++)
+            {
+                if (strcmp(r[i].name, u.name) == 0 && r[i].id == accountID)
+                {
+                    fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                            r[i].id, r[i].userId, username, r[i].accountNbr,
+                            r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
+                            r[i].country, r[i].phone, r[i].amount, r[i].accountType);
+                }
+                else
+                {
+                    fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                            r[i].id, r[i].userId, r[i].name, r[i].accountNbr,
+                            r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
+                            r[i].country, r[i].phone, r[i].amount, r[i].accountType);
+                }
+            }
+            fclose(fp);
+            printf("✔Success change");
+        }
+        stayOrQuit(u);
+    }
 }
