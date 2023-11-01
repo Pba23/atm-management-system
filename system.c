@@ -595,7 +595,7 @@ void countDetail(struct User u)
     struct Record r;
     int id;
     system("clear");
-    printf("\t\t====== Update account, %s =====\n\n", u.name);
+    printf("\t\t====== Account datail =====\n\n");
     printf("\n\n\n\n\n\t\t\t\tEnter your account number:");
     int counter;
     scanf("%d", &id);
@@ -708,7 +708,7 @@ void operation(char type[10], struct User u)
                         }
 
                         fclose(fp);
-                        
+
                         printf("\n\t\t\t✔ Transaction done with success!");
                         stayOrQuit(u);
                     }
@@ -775,4 +775,67 @@ void transactionMenu(struct User u)
             }
         }
     } while (1); // Répétez jusqu'à ce que l'utilisateur entre une option valide
+}
+void removeAccount(struct User u)
+{
+    int numRecords;
+    struct Record AllRecords[100];
+    int accountID;
+    int count = 0;
+    getAllRecords(AllRecords, &numRecords);
+
+    system("clear");
+    printf("\n\n\t\tEnter the id of the count to remove : ");
+
+    if (scanf("%d", &accountID) != 1)
+    {
+        printf("Invalid input. Please enter a valid option.\n");
+        while (getchar() != '\n')
+            ; // Vide le tampon d'entrée
+    }
+    for (int i = 0; i < numRecords; i++)
+    {
+        if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].id == accountID)
+        {
+            count++;
+        }
+    }
+
+    if (count == 0)
+    {
+        printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
+        stayOrQuit(u);
+    }
+    else
+    {
+        FILE *fp;
+        char filename[] = "./data/records.txt";
+
+        if ((fp = fopen(filename, "w")) == NULL)
+        {
+            printf("Error oppenning file : %s\n", filename);
+            return;
+        }
+        for (int i = 0; i < numRecords; i++)
+        {
+            if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].id == accountID)
+            {
+                count++;
+            }
+            else
+            {
+                fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                        AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
+                        AllRecords[i].deposit.day, AllRecords[i].deposit.month, AllRecords[i].deposit.year,
+                        AllRecords[i].country, AllRecords[i].phone, AllRecords[i].amount, AllRecords[i].accountType);
+            }
+        }
+        fclose(fp);
+    }
+    {
+        printf("\n\n\t\t✔Account removed with success\n");
+        stayOrQuit(u);
+    }
+
+   
 }
