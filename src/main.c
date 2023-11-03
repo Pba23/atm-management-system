@@ -1,7 +1,15 @@
 #include "header.h"
-
+#include "system.c"
+#include "update.c"
+#include "transaction.c"
+#include "auth.c"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 void mainMenu(struct User u)
 {
+
     int option;
     system("clear");
     printf("\n\n\t\t======= ATM =======\n\n");
@@ -22,27 +30,22 @@ void mainMenu(struct User u)
         createNewAcc(u);
         break;
     case 2:
-        // student TODO : add your **Update account information** function
-        // here
+        updateAccountMenu(u);
         break;
     case 3:
-        // student TODO : add your **Check the details of existing accounts** function
-        // here
+        countDetail(u);
         break;
     case 4:
         checkAllAccounts(u);
         break;
     case 5:
-        // student TODO : add your **Make transaction** function
-        // here
+        transactionMenu(u);
         break;
     case 6:
-        // student TODO : add your **Remove existing account** function
-        // here
+        removeAccount(u);
         break;
     case 7:
-        // student TODO : add your **Transfer owner** function
-        // here
+        transferOwner(u);
         break;
     case 8:
         exit(1);
@@ -52,52 +55,82 @@ void mainMenu(struct User u)
     }
 };
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 void initMenu(struct User *u)
 {
     int r = 0;
-    int option;
+    char input[10]; // Tableau de caractères pour stocker l'entrée de l'utilisateur
+
     system("clear");
     printf("\n\n\t\t======= ATM =======\n");
     printf("\n\t\t-->> Feel free to login / register :\n");
     printf("\n\t\t[1]- login\n");
     printf("\n\t\t[2]- register\n");
     printf("\n\t\t[3]- exit\n");
+
+    printf("Choose an option: ");
     while (!r)
     {
-        scanf("%d", &option);
-        switch (option)
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+
+        // Vérifier si la chaîne contient uniquement des chiffres
+        int isNumeric = 1;
+        for (int i = 0; input[i] != '\0'; i++)
         {
-        case 1:
-            loginMenu(u->name, u->password);
-            if (strcmp(u->password, getPassword(*u)) == 0)
+            if (input[i] < '0' || input[i] > '9')
             {
-                printf("\n\nPassword Match!");
+                isNumeric = 0;
+                break;
             }
-            else
+        }
+
+        if (isNumeric)
+        {
+            int option = atoi(input);
+
+            switch (option)
             {
-                printf("\nWrong password!! or User Name\n");
+            case 1:
+                loginMenu(u->name, u->password);
+                if (strcmp(u->password, getPassword(*u)) == 0)
+                {
+                    printf("\n\nPassword Match!\n");
+                }
+                else
+                {
+                    printf("\nWrong password or User Name\n");
+
+                    exit(1);
+                }
+                r = 1;
+                break;
+            case 2:
+                registerMenu(u->name, u->password);
+                break;
+            case 3:
                 exit(1);
+                break;
+            default:
+                printf("Choose a valid option: ");
+                break;
             }
-            r = 1;
-            break;
-        case 2:
-            // student TODO : add your **Registration** function
-            // here
-            r = 1;
-            break;
-        case 3:
-            exit(1);
-            break;
-        default:
-            printf("Insert a valid operation!\n");
+        }
+        else
+        {
+            printf("Choose a valid option: ");
         }
     }
-};
+}
 
+//  struct User *users = readUserData("./data.users", 2);
 int main()
 {
     struct User u;
-    
+
     initMenu(&u);
     mainMenu(u);
     return 0;
