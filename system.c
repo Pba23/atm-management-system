@@ -38,7 +38,7 @@ void stayOrQuit(struct User u)
     int choice;
     do
     {
-        printf("\n\t\tEnter 0 to try again, 1 to return to the main menu, or 2 to exit: ");
+        printf("\n\t\tEnter 1 to return to the main menu, or 2 to exit: ");
         if (scanf("%d", &choice) != 1)
         {
             printf("Invalid input. Please enter a valid option.\n");
@@ -105,7 +105,7 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u)
 void success(struct User u)
 {
     int option;
-    printf("\n✔ Success!\n\n");
+    printf("\n✔ Success !\n\n");
 invalid:
     printf("Enter 1 to go to the main menu and 0 to exit!\n");
     scanf("%d", &option);
@@ -123,74 +123,6 @@ invalid:
         printf("Insert a valid operation!\n");
         goto invalid;
     }
-}
-
-void createNewAcc(struct User u)
-{
-    struct Record r;
-    struct Record cr;
-    char userName[50];
-    FILE *pf = fopen(RECORDS, "a+");
-
-noAccount:
-    system("clear");
-    printf("\t\t\t===== New record =====\n");
-
-    printf("\nEnter today's date(mm/dd/yyyy):");
-    scanf("%d/%d/%d", &r.deposit.month, &r.deposit.day, &r.deposit.year);
-    printf("\nEnter the account number:");
-    scanf("%d", &r.accountNbr);
-
-    while (getAccountFromFile(pf, userName, &cr))
-    {
-        if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
-        {
-            printf("✖ This Account already exists for this user\n\n");
-            goto noAccount;
-        }
-    }
-    printf("\nEnter the country:");
-    scanf("%s", r.country);
-    printf("\nEnter the phone number:");
-    scanf("%d", &r.phone);
-    printf("\nEnter amount to deposit: $");
-    scanf("%lf", &r.amount);
-    printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
-    scanf("%s", r.accountType);
-
-    saveAccountToFile(pf, u, r);
-
-    fclose(pf);
-    success(u);
-}
-
-void checkAllAccounts(struct User u)
-{
-    char userName[100];
-    struct Record r;
-
-    FILE *pf = fopen(RECORDS, "r");
-
-    system("clear");
-    printf("\t\t====== All accounts from user, %s =====\n\n", u.name);
-    while (getAccountFromFile(pf, userName, &r))
-    {
-        if (strcmp(userName, u.name) == 0)
-        {
-            printf("_____________________\n");
-            printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%d \nAmount deposited: $%.2f \nType Of Account:%s\n",
-                   r.accountNbr,
-                   r.deposit.day,
-                   r.deposit.month,
-                   r.deposit.year,
-                   r.country,
-                   r.phone,
-                   r.amount,
-                   r.accountType);
-        }
-    }
-    fclose(pf);
-    success(u);
 }
 void getAllRecords(struct Record AllRecords[], int *numRecords)
 {
@@ -226,6 +158,76 @@ void getAllRecords(struct Record AllRecords[], int *numRecords)
 
     // Mettre à jour le nombre d'utilisateurs
     *numRecords = count;
+}
+void createNewAcc(struct User u)
+{
+    struct Record r;
+    struct Record AllRecords[100];
+    int num;
+    struct Record cr;
+    char userName[50];
+    FILE *pf = fopen(RECORDS, "a+");
+
+noAccount:
+    system("clear");
+    printf("\t\t\t===== New record =====\n");
+
+    printf("\nEnter today's date(mm/dd/yyyy):");
+    scanf("%d/%d/%d", &r.deposit.month, &r.deposit.day, &r.deposit.year);
+    printf("\nEnter the account number:");
+    scanf("%d", &r.accountNbr);
+
+    while (getAccountFromFile(pf, userName, &cr))
+    {
+        if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
+        {
+            printf("✖ This Account already exists for this user\n\n");
+            goto noAccount;
+        }
+    }
+    printf("\nEnter the country:");
+    scanf("%s", r.country);
+    printf("\nEnter the phone number:");
+    scanf("%d", &r.phone);
+    printf("\nEnter amount to deposit: $");
+    scanf("%lf", &r.amount);
+    printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
+    scanf("%s", r.accountType);
+    getAllRecords(AllRecords, &num);
+    r.id = num;
+    saveAccountToFile(pf, u, r);
+
+    fclose(pf);
+    success(u);
+}
+
+void checkAllAccounts(struct User u)
+{
+    char userName[100];
+    struct Record r;
+
+    FILE *pf = fopen(RECORDS, "r");
+
+    system("clear");
+    printf("\t\t====== All accounts from user, %s =====\n\n", u.name);
+    while (getAccountFromFile(pf, userName, &r))
+    {
+        if (strcmp(userName, u.name) == 0)
+        {
+            printf("_____________________\n");
+            printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%d \nAmount deposited: $%.2f \nType Of Account:%s\n",
+                   r.accountNbr,
+                   r.deposit.day,
+                   r.deposit.month,
+                   r.deposit.year,
+                   r.country,
+                   r.phone,
+                   r.amount,
+                   r.accountType);
+        }
+    }
+    fclose(pf);
+    success(u);
 }
 
 void changeCountry(struct Record AllRecords[], int numRecords, char country[100], struct User u, int accountNumber)
@@ -291,273 +293,7 @@ void changeNumber(struct Record AllRecords[], int numRecords, int number, struct
     fclose(fp);
 }
 
-void updateAccountMenuAgain(struct User u)
-{
-    int i = 0;
-    char input[10];
-    char userName[100];
-    struct Record r;
-    int id;
-    struct Record AllRecords[100];
-    int numRecords = 0;
-    int choice;
-    FILE *pf = fopen(RECORDS, "r");
-t:
-    system("clear");
 
-    printf("\t\t====== Update account, %s =====\n\n", u.name);
-    printf("\n\n\n\n\n\t\t\t\t✖ count not found!!\n");
-    printf("\nEnter your account number again:");
-    int counter;
-    scanf("%d", &id);
-    while (getAccountFromFile(pf, userName, &r))
-    {
-        if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
-        {
-            printf("\n\t\t-->> What would you update / register :\n");
-            printf("\n\t\t[1]- phone number\n");
-            printf("\n\t\t[2]- country\n");
-            printf("Choose an option: ");
-            while (!i)
-            {
-                fgets(input, sizeof(input), stdin);
-                input[strcspn(input, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
-
-                // Vérifier si la chaîne contient uniquement des chiffres
-                int isNumeric = 1;
-                for (int i = 0; input[i] != '\0'; i++)
-                {
-                    if (input[i] < '0' || input[i] > '9')
-                    {
-                        isNumeric = 0;
-                        break;
-                    }
-                }
-
-                if (isNumeric)
-                {
-                    int option = atoi(input);
-
-                    switch (option)
-                    {
-                    case 1:
-                        int phone;
-                        printf("Give the new phone number:");
-                        scanf("%d", &phone);
-                        getAllRecords(AllRecords, &numRecords);
-                        changeNumber(AllRecords, numRecords, phone, u, id);
-                        printf("\n✔ Number changed with success!");
-
-                        do
-                        {
-                            printf("\n\t\tEnter 0 to try again, 1 to return to the main menu, or 2 to exit: ");
-                            if (scanf("%d", &choice) != 1)
-                            {
-                                printf("\nInvalid input. Please enter a valid option.\n");
-                                while (getchar() != '\n')
-                                    ;
-                            }
-                            else
-                            {
-                                switch (choice)
-                                {
-                                case 1:
-                                    mainMenu(u);
-                                    break;
-                                case 2:
-                                    exit(0);
-                                    break;
-                                default:
-                                    printf("Invalid option. Please enter a valid option.\n");
-                                    break;
-                                }
-                            }
-                        } while (1);
-                        i = 1;
-                        break;
-                    case 2:
-                        char country[100];
-                        printf("Give The new Country:");
-                        scanf("%s", country);
-                        getAllRecords(AllRecords, &numRecords);
-                        changeCountry(AllRecords, numRecords, country, u, id);
-                        printf("\n✔ Number changed with success!");
-
-                        do
-                        {
-                            printf("\n\t\tEnter 0 to try again, 1 to return to the main menu, or 2 to exit: ");
-                            if (scanf("%d", &choice) != 1)
-                            {
-                                printf("\nInvalid input. Please enter a valid option.\n");
-                                while (getchar() != '\n')
-                                    ;
-                            }
-                            else
-                            {
-                                switch (choice)
-                                {
-                                case 1:
-                                    mainMenu(u);
-                                    break;
-                                case 2:
-                                    exit(0);
-                                    break;
-                                default:
-                                    printf("Invalid option. Please enter a valid option.\n");
-                                    break;
-                                }
-                            }
-                        } while (1);
-                        i = 1;
-                        break;
-                    default:
-                        printf("Please choose a valid option: ");
-                        break;
-                    }
-                }
-            }
-            counter++;
-        }
-    }
-    if (counter == 0)
-    {
-        updateAccountMenuAgain(u);
-    }
-}
-void updateAccountMenu(struct User u)
-{
-    int boolean = 0;
-    char input[10];
-    char userName[100];
-    struct Record r;
-    int id;
-    struct Record AllRecords[100];
-    int numRecords = 0;
-    int choice;
-    FILE *pf = fopen(RECORDS, "r");
-
-    system("clear");
-    printf("\t\t====== Update account, %s =====\n\n", u.name);
-    printf("\n\n\n\n\n\t\t\t\tEnter your account number:");
-    int counter;
-    scanf("%d", &id);
-    while (getAccountFromFile(pf, userName, &r))
-    {
-        if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
-        {
-            printf("\n\t\t-->> What would you update / register :\n");
-            printf("\n\t\t[1]- phone number\n");
-            printf("\n\t\t[2]- country\n");
-            printf("Choose an option: ");
-            while (!boolean)
-            {
-                fgets(input, sizeof(input), stdin);
-                input[strcspn(input, "\n")] = '\0';
-
-                // Vérifier si la chaîne contient uniquement des chiffres
-                int isNumeric = 1;
-                for (int i = 0; input[i] != '\0'; i++)
-                {
-                    if (input[i] < '0' || input[i] > '9')
-                    {
-                        isNumeric = 0;
-                        break;
-                    }
-                }
-
-                if (isNumeric)
-                {
-                    int option = atoi(input);
-
-                    switch (option)
-                    {
-                    case 1:
-                        int phone;
-                        int opt;
-                        system("clear");
-                        printf("Give the new phone number:");
-                        scanf("%d", &phone);
-                        getAllRecords(AllRecords, &numRecords);
-                        changeNumber(AllRecords, numRecords, phone, u, id);
-                        printf("\n✔ Number changed with success!");
-
-                        do
-                        {
-                            printf("\n\t\tEnter 0 to try again, 1 to return to the main menu, or 2 to exit: ");
-                            if (scanf("%d", &choice) != 1)
-                            {
-                                printf("\nInvalid input. Please enter a valid option.\n");
-                                while (getchar() != '\n')
-                                    ;
-                            }
-                            else
-                            {
-                                switch (choice)
-                                {
-                                case 1:
-                                    mainMenu(u);
-                                    break;
-                                case 2:
-                                    exit(0);
-                                    break;
-                                default:
-                                    printf("Invalid option. Please enter a valid option.\n");
-                                    break;
-                                }
-                            }
-                        } while (1);
-                    case 2:
-                        char country[100];
-                        printf("Give The new Country:");
-                        scanf("%s", country);
-                        getAllRecords(AllRecords, &numRecords);
-                        changeCountry(AllRecords, numRecords, country, u, id);
-                        printf("\n✔ Country changed with success!");
-
-                        do
-                        {
-                            printf("\n\t\tEnter 0 to try again, 1 to return to the main menu, or 2 to exit: ");
-                            if (scanf("%d", &choice) != 1)
-                            {
-                                printf("\nInvalid input. Please enter a valid option.\n");
-                                while (getchar() != '\n')
-                                    ;
-                            }
-                            else
-                            {
-                                switch (choice)
-                                {
-                                case 1:
-                                    mainMenu(u);
-                                    break;
-                                case 2:
-                                    exit(0);
-                                    break;
-                                default:
-                                    printf("Invalid option. Please enter a valid option.\n");
-                                    break;
-                                }
-                            }
-                        } while (1);
-                        break;
-                    default:
-                        printf("Please choose a valid option: ");
-                        break;
-                    }
-                }
-                else
-                {
-                    printf("Choose a valid option: ");
-                }
-            }
-            counter++;
-        }
-    }
-    if (counter == 0)
-    {
-        updateAccountMenuAgain(u);
-    }
-}
 void interestMessage(struct Record r)
 {
     float value;
@@ -571,21 +307,27 @@ void interestMessage(struct Record r)
         if (strcmp(r.accountType, "saving") == 0)
         {
             interest = 0.07;
+            value = r.amount * interest / 12;
+            printf("You will get $%.2f as interest on day %d of every month", value, r.deposit.day);
         }
         else if (strcmp(r.accountType, "fixed01") == 0)
         {
             interest = 0.04;
+            value = r.amount * interest;
+            printf("You will get $%.2f as interest on %d/%d/%d of every month", value, r.deposit.day, r.deposit.month, r.deposit.year + 1);
         }
         else if (strcmp(r.accountType, "fixed02") == 0)
         {
             interest = 0.05;
+            value = r.amount * interest * 2;
+            printf("You will get $%.2f as interest on %d/%d/%d of every month", value, r.deposit.day, r.deposit.month, r.deposit.year + 2);
         }
         else if (strcmp(r.accountType, "fixed03") == 0)
         {
             interest = 0.08;
+            value = r.amount * interest * 3;
+            printf("You will get $%.2f as interest on %d/%d/%d of every month", value, r.deposit.day, r.deposit.month, r.deposit.year + 3);
         }
-        value = r.amount * interest / 12;
-        printf("You will get $%.2f as interest on day %d of every month", value, r.deposit.day);
     }
 }
 void countDetail(struct User u)
@@ -594,6 +336,7 @@ void countDetail(struct User u)
     FILE *pf = fopen(RECORDS, "r");
     struct Record r;
     int id;
+    int count = 0;
     system("clear");
     printf("\t\t====== Account datail =====\n\n");
     printf("\n\n\n\n\n\t\t\t\tEnter your account number:");
@@ -611,171 +354,65 @@ void countDetail(struct User u)
             printf("Type Of Account : %s\n", r.accountType);
             interestMessage(r);
             stayOrQuit(u);
+            count++;
         }
     }
-}
-void operation(char type[10], struct User u)
-{
-    char userName[50];
-    FILE *pf = fopen(RECORDS, "a+");
-    int id;
-    int i;
-    float amount;
-    int count = 0;
-    do
+    if (count == 0)
     {
-        printf("Enter your account number: ");
-
-        if (scanf("%d", &id) != 1)
-        {
-            printf("Invalid input. Please enter a valid option.\n");
-            while (getchar() != '\n')
-                ; // Vide le tampon d'entrée
-        }
-        else
-        {
-            struct Record r[100];
-            int numRecord;
-            getAllRecords(r, &numRecord);
-            for (i = 0; i < numRecord; i++)
-            {
-                if (strcmp(r[i].name, u.name) == 0 && r[i].id == id)
-                {
-                    if (strcmp(r[i].accountType, "saving") == 0 || strcmp(r[i].accountType, "current") == 0)
-                    {
-                        if (strcmp(type, "deposit"))
-                        {
-                            system("clear");
-
-                            int validInput = 0;
-                            do
-                            {
-                                // Demandez à l'utilisateur de saisir le montant du dépôt
-                                printf("Give amount to deposit :");
-                                if (scanf("%f", &amount) == 1)
-                                {
-                                    r[i].amount = r[i].amount + amount;
-                                    validInput = 1;
-                                }
-                                else
-                                {
-                                    // La saisie n'est pas un nombre valide, demandez de ressaisir
-                                    printf("Invalid input. Please enter a valid deposit amount.\n");
-                                    while (getchar() != '\n')
-                                        ; // Vide le tampon d'entrée
-                                }
-                            } while (!validInput);
-                        }
-                        if (strcmp(type, "withdraw"))
-                        {
-                            system("clear");
-
-                            int validInput = 0;
-                            do
-                            {
-                                // Demandez à l'utilisateur de saisir le montant du dépôt
-                                printf("Give amount to withdraw:");
-                                if (scanf("%f", &amount) == 1)
-                                {
-                                    r[i].amount = r[i].amount - amount;
-                                    validInput = 1;
-                                }
-                                else
-                                {
-                                    // La saisie n'est pas un nombre valide, demandez de ressaisir
-                                    printf("Invalid input. Please enter a valid deposit amount.\n");
-                                    while (getchar() != '\n')
-                                        ; // Vide le tampon d'entrée
-                                }
-                            } while (!validInput);
-                        }
-                        FILE *fp;
-                        char filename[] = "./data/records.txt";
-
-                        if ((fp = fopen(filename, "w")) == NULL)
-                        {
-                            printf("Error oppenning file : %s\n", filename);
-                            return;
-                        }
-
-                        for (int i = 0; i < numRecord; i++)
-                        {
-
-                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
-                                    r[i].id, r[i].userId, r[i].name, r[i].accountNbr,
-                                    r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
-                                    r[i].country, r[i].phone, r[i].amount, r[i].accountType);
-                        }
-
-                        fclose(fp);
-
-                        printf("\n\t\t\t✔ Transaction done with success!");
-                        stayOrQuit(u);
-                    }
-                    else
-                    {
-                        printf("\n\t\tError you are not allowed to do transaction beacause your are %s\n", r[i].accountType);
-                        stayOrQuit(u);
-                    }
-                    count++;
-                }
-            }
-            if (count == 0)
-            {
-                printf("\nThis is not your count\n");
-                operation(type, u);
-            }
-        }
-    } while (1); // Répétez jusqu'à ce que l'utilisateur entre une option valide
+        printf("This account id does'nt exists or is'nt yours");
+        stayOrQuit(u);
+    }
 }
-void transactionMenu(struct User u)
-{
-    int choice;
-    // Code pour initialiser les données nécessaires (comme les comptes) ici
-    char op[10];
-    do
-    {
-        system("clear");
-        printf("\nTransaction Menu\n");
-        printf("[1]. Make a deposit\n");
-        printf("[2]. Make a withdrawal\n");
-        printf("[3]. Return to Main Menu\n");
-        printf("[4]. Exit\n");
-        printf("Enter your choice: ");
 
-        if (scanf("%d", &choice) != 1)
-        {
-            printf("Invalid input. Please enter a valid option.\n");
-            while (getchar() != '\n')
-                ; // Vide le tampon d'entrée
-        }
-        else
-        {
-            switch (choice)
-            {
-            case 1:
+// void (struct User u)
+// {
+//     int choice;
+//     // Code pour initialiser les données nécessaires (comme les comptes) ici
+//     char op[10];
+//     do
+//     {
+//         system("clear");
+//         printf("\nTransaction Menu\n");
+//         printf("[1]. Make a deposit\n");
+//         printf("[2]. Make a withdrawal\n");
+//         printf("[3]. Return to Main Menu\n");
+//         printf("[4]. Exit\n");
+//         printf("Enter your choice: ");
 
-                strcpy(op, "deposit");
-                operation(op, u);
-                break;
-            case 2:
+//         if (scanf("%d", &choice) != 1)
+//         {
+//             printf("Invalid input. Please enter a valid option.\n");
+//             while (getchar() != '\n')
+//                 ; // Vide le tampon d'entrée
+//         }
+//         else
+//         {
+//             switch (choice)
+//             {
+//             case 1:
 
-                strcpy(op, "withdraw");
-                operation(op, u);
-                break;
-            case 3:
-                mainMenu(u);
-                return;
-            case 4:
-                exit(0);
-                break;
-            default:
-                printf("Invalid option. Please enter a valid option.\n");
-                break;
-            }
-        }
-    } while (1); // Répétez jusqu'à ce que l'utilisateur entre une option valide
-}
+//                 strcpy(op, "deposit");
+//                 operation(op, u);
+//                 break;
+//             case 2:
+
+//                 strcpy(op, "withdraw");
+//                 operation(op, u);
+//                 break;
+//             case 3:
+//                 mainMenu(u);
+//                 return;
+//             case 4:
+//                 exit(0);
+//                 break;
+//             default:
+//                 printf("Invalid option. Please enter a valid option.\n");
+//                 break;
+//             }
+//             break;
+//         }
+//     } while (1); // Répétez jusqu'à ce que l'utilisateur entre une option valide
+// }
 void removeAccount(struct User u)
 {
     int numRecords;
@@ -833,9 +470,7 @@ void removeAccount(struct User u)
         fclose(fp);
     }
     {
-        printf("\n\n\t\t✔Account removed with success\n");
+        success(u);
         stayOrQuit(u);
     }
-
-   
 }
