@@ -359,7 +359,7 @@ void countDetail(struct User u)
     }
     if (count == 0)
     {
-        printf("This account id does'nt exists or is'nt yours");
+        printf("This account number does'nt exists or is'nt yours");
         stayOrQuit(u);
     }
 }
@@ -432,7 +432,7 @@ void removeAccount(struct User u)
     }
     for (int i = 0; i < numRecords; i++)
     {
-        if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].id == accountID)
+        if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
         {
             count++;
         }
@@ -440,7 +440,7 @@ void removeAccount(struct User u)
 
     if (count == 0)
     {
-        printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
+        printf("\n\n\t\tThis account number does'nt exist or is'nt yours\n");
         stayOrQuit(u);
     }
     else
@@ -455,7 +455,7 @@ void removeAccount(struct User u)
         }
         for (int i = 0; i < numRecords; i++)
         {
-            if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].id == accountID)
+            if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
             {
                 count++;
             }
