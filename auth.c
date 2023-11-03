@@ -120,33 +120,53 @@ int userExists(struct User users[], int numUsers, const char *name)
 }
 void registerMenu(char a[50], char pass[50])
 {
-
+    printf("nice");
     struct User users[100]; // Tableau de structures pour stocker les données
     int numUsers = 0;
     checkIn(users, &numUsers);
-    printf("\n\n\n\n\n\t\t\t\tEnter the your name:");
+
     while (1)
     {
-        scanf("%s", a);
-        if (userExists(users, numUsers, a))
+        printf("\n\n\n\n\n\t\t\t\tEnter your name:");
+        char input[50];
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+
+        if (userExists(users, numUsers, input))
         {
-            printf("\n\n\t\t\t\tThis name already exists enter another:");
+            printf("\n\n\t\t\t\tThis name already exists. Enter another:");
+        }
+        else
+        {
+            strcpy(a, input);
+            break;
+        }
+    }
+
+    while (1)
+    {
+        printf("\n\n\n\n\n\t\t\t\tEnter the password to login:");
+        fgets(pass, sizeof(&pass), stdin);
+        pass[strcspn(pass, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+
+        if (strchr(pass, ' ') != NULL)
+        {
+            printf("\n\nThe password should not contain a space. Try again.\n");
         }
         else
         {
             break;
         }
     }
-    printf("\n\n\n\n\n\t\t\t\tEnter the password to login:");
-    scanf("%s", pass);
 
     // Ajoutez le nouvel utilisateur au tableau
     users[numUsers].id = numUsers; // Vous pouvez assigner l'ID de manière incrémentielle si nécessaire
     strcpy(users[numUsers].name, a);
     strcpy(users[numUsers].password, pass);
-    (numUsers)++; // Incrémentez le nombre d'utilisateurs
+    numUsers++; // Incrémentez le nombre d'utilisateurs
     registerUser(users, &numUsers, a, pass);
 }
+
 void transferOwner(struct User u)
 {
     int numRecords;
@@ -158,7 +178,7 @@ void transferOwner(struct User u)
     char username[50];
     getAllRecords(r, &numRecords);
     system("clear");
-    printf("\n\n\t\tEnter the id of the account you want to transfer ownership : ");
+    printf("\n\n\t\tEnter the number of the account you want to transfer ownership : ");
 
     if (scanf("%d", &accountID) != 1)
     {
@@ -168,7 +188,7 @@ void transferOwner(struct User u)
     }
     for (int i = 0; i < numRecords; i++)
     {
-        if (strcmp(r[i].name, u.name) == 0 && r[i].id == accountID)
+        if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
         {
             count++;
             printf("\t\t\t\t====Transfering your account number: %d\n\n", r[i].id);
@@ -183,7 +203,7 @@ void transferOwner(struct User u)
 
     if (count == 0)
     {
-        printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
+        printf("\n\n\t\tThis account number does'nt exist or is'nt yours\n");
         stayOrQuit(u);
     }
     else
@@ -208,7 +228,7 @@ void transferOwner(struct User u)
             }
             for (int i = 0; i < numRecords; i++)
             {
-                if (strcmp(r[i].name, u.name) == 0 && r[i].id == accountID)
+                if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
                 {
                     fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
                             r[i].id, r[i].userId, username, r[i].accountNbr,
