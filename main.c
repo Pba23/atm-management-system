@@ -1,5 +1,7 @@
 #include "header.h"
 #include "system.c"
+#include "update.c"
+#include "transaction.c"
 #include "auth.c"
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,10 +42,10 @@ void mainMenu(struct User u)
         transactionMenu(u);
         break;
     case 6:
-       removeAccount(u);
+        removeAccount(u);
         break;
     case 7:
-       transferOwner(u);
+        transferOwner(u);
         break;
     case 8:
         exit(1);
@@ -101,6 +103,7 @@ void initMenu(struct User *u)
                 else
                 {
                     printf("\nWrong password or User Name\n");
+
                     exit(1);
                 }
                 r = 1;
@@ -122,7 +125,6 @@ void initMenu(struct User *u)
         }
     }
 }
-
 
 //  struct User *users = readUserData("./data.users", 2);
 int main()
