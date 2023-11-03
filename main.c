@@ -110,6 +110,7 @@ void initMenu(struct User *u)
                 break;
             case 2:
                 registerMenu(u->name, u->password);
+                stayOrQuit(*u);
                 break;
             case 3:
                 exit(1);
