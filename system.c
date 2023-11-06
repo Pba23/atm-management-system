@@ -1,4 +1,5 @@
 #include "header.h"
+#include <stdbool.h>
 
 const char *RECORDS = "./data/records.txt";
 
@@ -159,6 +160,31 @@ void getAllRecords(struct Record AllRecords[], int *numRecords)
     // Mettre à jour le nombre d'utilisateurs
     *numRecords = count;
 }
+// struct Date
+// {
+//     int month;
+//     int day;
+//     int year;
+// };
+
+bool isLeapYear(int year)
+{
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+bool isValidDate(struct Date date)
+{
+    if (date.year < 0)
+        return false;
+    if (date.month < 1 || date.month > 12)
+        return false;
+
+    int daysInMonth[] = {0, 31, 28 + isLeapYear(date.year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if (date.day < 1 || date.day > daysInMonth[date.month])
+        return false;
+
+    return true;
+}
 void createNewAcc(struct User u)
 {
     struct Record r;
@@ -173,7 +199,12 @@ noAccount:
     printf("\t\t\t===== New record =====\n");
 
     printf("\nEnter today's date(mm/dd/yyyy):");
-    scanf("%d/%d/%d", &r.deposit.month, &r.deposit.day, &r.deposit.year);
+    scanf("%d/%d/%d", &r.deposit.day, &r.deposit.month, &r.deposit.year);
+
+    if (!isValidDate(r.deposit))
+    {
+       goto noAccount;
+    }
     printf("\nEnter the account number:");
     scanf("%d", &r.accountNbr);
 
@@ -292,7 +323,6 @@ void changeNumber(struct Record AllRecords[], int numRecords, int number, struct
 
     fclose(fp);
 }
-
 
 void interestMessage(struct Record r)
 {
