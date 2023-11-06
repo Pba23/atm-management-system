@@ -97,6 +97,11 @@ void loginMenu(char a[50], char pass[50])
             break;
         }
     }
+    if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
+    {
+        perror("tcsetattr");
+        return exit(1);
+    }
 };
 
 const char *getPassword(struct User u)
