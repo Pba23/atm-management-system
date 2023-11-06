@@ -3,13 +3,74 @@
 #include <stdio.h>
 char *USERS = "./data/users.txt";
 
+void checkIn(struct User users[], int *numUsers)
+{
+    FILE *fp;
+    char filename[] = "data/users.txt"; // Nom du fichier
+    int count = 0;                      // Compteur du nombre d'utilisateurs
+
+    // Ouvrir le fichier en mode lecture
+    if ((fp = fopen(filename, "r")) == NULL)
+    {
+        printf("Erreur lors de l'ouverture du fichier\n");
+        exit(1);
+    }
+
+    // Lire les données du fichier
+    while (fscanf(fp, "%d %s %s", &users[count].id, users[count].name, users[count].password) != EOF)
+    {
+        count++;
+    }
+
+    // Fermer le fichier
+    fclose(fp);
+
+    // Mettre à jour le nombre d'utilisateurs
+    *numUsers = count;
+}
+int userExists(struct User users[], int numUsers, const char *name)
+{
+    for (int i = 0; i < numUsers; i++)
+    {
+        if (strcmp(users[i].name, name) == 0)
+        {
+            return 1; // L'utilisateur existe
+        }
+    }
+    return 0; // L'utilisateur n'existe pas
+}
 void loginMenu(char a[50], char pass[50])
 {
     struct termios oflags, nflags;
-
+    int numUsers;
+    struct User users[100];
+    checkIn(users, &numUsers);
     system("clear");
-    printf("\n\n\n\t\t\t\t   Bank Management System\n\t\t\t\t\t User Login:");
-    scanf("%s", a);
+    while (1)
+    {
+
+        printf("\n\n\n\t\t\t\t   Bank Management System\n\t\t\t\t\t User Login:");
+        char input[50];
+        printf("\n\n\n\n\n\t\t\t\tEnter your name:");
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = '\0';
+        if (!userExists(users, numUsers, input))
+        {
+            printf("\n\n\t\t\t\tThis name does'nt exist. Enter another:");
+        }
+        else
+        {
+            if (strchr(input, ' ') != NULL)
+            {
+                printf("\n\nThe name should not contain a space. Try again.\n");
+            }
+            else
+            {
+                strcpy(a, input);
+                break;
+            }
+        }
+    }
     // disabling echo
     tcgetattr(fileno(stdin), &oflags);
     nflags = oflags;
@@ -21,14 +82,20 @@ void loginMenu(char a[50], char pass[50])
         perror("tcsetattr");
         return exit(1);
     }
-    printf("\n\n\n\n\n\t\t\t\tEnter the password to login:");
-    scanf("%s", pass);
-
-    // restore terminal
-    if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
+    while (1)
     {
-        perror("tcsetattr");
-        return exit(1);
+        printf("\n\n\n\n\n\t\t\t\tEnter the password to login:");
+        fgets(pass, sizeof(&pass), stdin);
+        pass[strcspn(pass, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+
+        if (strchr(pass, ' ') != NULL)
+        {
+            printf("\n\nThe password should not contain a space. Try again.\n");
+        }
+        else
+        {
+            break;
+        }
     }
 };
 
@@ -56,31 +123,6 @@ const char *getPassword(struct User u)
     fclose(fp);
     return "no user found";
 }
-void checkIn(struct User users[], int *numUsers)
-{
-    FILE *fp;
-    char filename[] = "data/users.txt"; // Nom du fichier
-    int count = 0;                      // Compteur du nombre d'utilisateurs
-
-    // Ouvrir le fichier en mode lecture
-    if ((fp = fopen(filename, "r")) == NULL)
-    {
-        printf("Erreur lors de l'ouverture du fichier\n");
-        exit(1);
-    }
-
-    // Lire les données du fichier
-    while (fscanf(fp, "%d %s %s", &users[count].id, users[count].name, users[count].password) != EOF)
-    {
-        count++;
-    }
-
-    // Fermer le fichier
-    fclose(fp);
-
-    // Mettre à jour le nombre d'utilisateurs
-    *numUsers = count;
-}
 
 // Fonction pour enregistrer un nouvel utilisateur et le stocker dans le fichier
 void registerUser(struct User users[], int *numUsers, const char *name, const char *password)
@@ -107,28 +149,16 @@ void registerUser(struct User users[], int *numUsers, const char *name, const ch
 
     printf("✔Registration success for the user : %s\n", name);
 }
-int userExists(struct User users[], int numUsers, const char *name)
-{
-    for (int i = 0; i < numUsers; i++)
-    {
-        if (strcmp(users[i].name, name) == 0)
-        {
-            return 1; // L'utilisateur existe
-        }
-    }
-    return 0; // L'utilisateur n'existe pas
-}
 void registerMenu(char a[50], char pass[50])
 {
-    printf("nice");
     struct User users[100]; // Tableau de structures pour stocker les données
     int numUsers = 0;
     checkIn(users, &numUsers);
 
     while (1)
     {
-        printf("\n\n\n\n\n\t\t\t\tEnter your name:");
         char input[50];
+        printf("\n\n\n\n\n\t\t\t\tEnter your name:");
         fgets(input, sizeof(input), stdin);
         input[strcspn(input, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
 
@@ -138,14 +168,21 @@ void registerMenu(char a[50], char pass[50])
         }
         else
         {
-            strcpy(a, input);
-            break;
+            if (strchr(input, ' ') != NULL)
+            {
+                printf("\n\nThe name should not contain a space. Try again.\n");
+            }
+            else
+            {
+                strcpy(a, input);
+                break;
+            }
         }
     }
 
     while (1)
     {
-        printf("\n\n\n\n\n\t\t\t\tEnter the password to login:");
+        printf("\n\n\n\n\n\t\t\t\tEnter your password:");
         fgets(pass, sizeof(&pass), stdin);
         pass[strcspn(pass, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
 
@@ -178,7 +215,7 @@ void transferOwner(struct User u)
     char username[50];
     getAllRecords(r, &numRecords);
     system("clear");
-    printf("\n\n\t\tEnter the number of the account you want to transfer ownership : ");
+    printf("\n\n\t\tEnter the id of the account you want to transfer ownership : ");
 
     if (scanf("%d", &accountID) != 1)
     {
@@ -188,7 +225,7 @@ void transferOwner(struct User u)
     }
     for (int i = 0; i < numRecords; i++)
     {
-        if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
+        if (strcmp(r[i].name, u.name) == 0 && r[i].id == accountID)
         {
             count++;
             printf("\t\t\t\t====Transfering your account number: %d\n\n", r[i].id);
@@ -203,7 +240,7 @@ void transferOwner(struct User u)
 
     if (count == 0)
     {
-        printf("\n\n\t\tThis account number does'nt exist or is'nt yours\n");
+        printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
         stayOrQuit(u);
     }
     else
@@ -228,7 +265,7 @@ void transferOwner(struct User u)
             }
             for (int i = 0; i < numRecords; i++)
             {
-                if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
+                if (strcmp(r[i].name, u.name) == 0 && r[i].id == accountID)
                 {
                     fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
                             r[i].id, r[i].userId, username, r[i].accountNbr,
