@@ -1,8 +1,19 @@
 #include "header.h"
 #include <stdbool.h>
-
+#include <ctype.h>
 const char *RECORDS = "./data/records.txt";
-
+int isNumber(const char *input)
+{
+    while (*input)
+    {
+        if (!isdigit(*input))
+        {
+            return 0; // Ce n'est pas un nombre
+        }
+        input++;
+    }
+    return 1; // Tous les caractères sont des chiffres
+}
 int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
 {
     return fscanf(ptr, "%d %d %s %d %d/%d/%d %s %d %lf %s",
@@ -18,7 +29,32 @@ int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
                   &r->amount,
                   r->accountType) != EOF;
 }
+bool isValidAmount(const char *amount)
+{
+    int len = strlen(amount);
+    int dotCount = 0;
 
+    for (int i = 0; i < len; ++i)
+    {
+        if (!isdigit(amount[i]))
+        {
+            if (amount[i] == '.')
+            {
+                dotCount++;
+                if (dotCount > 1)
+                {
+                    return false; // Plus d'un point décimal
+                }
+            }
+            else
+            {
+                return false; // Contient des caractères non numériques autres que le point décimal
+            }
+        }
+    }
+
+    return true; // Valide s'il n'y a pas plus d'un point et que tous les caractères sont des chiffres ou un seul point
+}
 void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
 {
     fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n\n",
@@ -171,6 +207,18 @@ bool isLeapYear(int year)
 {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
+bool isValidNumber(const char *accountNumber)
+{
+    int len = strlen(accountNumber);
+    for (int i = 0; i < len; ++i)
+    {
+        if (!isdigit(accountNumber[i]))
+        {
+            return false; // Contient des caractères non numériques
+        }
+    }
+    return true; // Tous les caractères sont des chiffres
+}
 
 bool isValidDate(struct Date date)
 {
@@ -185,6 +233,39 @@ bool isValidDate(struct Date date)
 
     return true;
 }
+bool isValidPhoneNumber(const char *phone)
+{
+    // Vérifie si tous les caractères sont des chiffres et que la longueur ne dépasse pas 15
+    int len = strlen(phone);
+    if (len > 15)
+    {
+        return false; // Trop long
+    }
+
+    for (int i = 0; i < len; ++i)
+    {
+        if (!isdigit(phone[i]))
+        {
+            return false; // Contient des caractères non numériques
+        }
+    }
+    return true; // Tous les caractères sont des chiffres et la longueur est valide
+}
+bool isValidAccountType(const char *accountType)
+{
+    const char *validTypes[] = {"saving", "current", "fixed01", "fixed02", "fixed03"};
+    int numValidTypes = sizeof(validTypes) / sizeof(validTypes[0]);
+
+    for (int i = 0; i < numValidTypes; ++i)
+    {
+        if (strcmp(accountType, validTypes[i]) == 0)
+        {
+            return true; // Trouvé un type de compte valide
+        }
+    }
+
+    return false; // Aucun type de compte valide trouvé
+}
 void createNewAcc(struct User u)
 {
     struct Record r;
@@ -193,37 +274,124 @@ void createNewAcc(struct User u)
     struct Record cr;
     char userName[50];
     FILE *pf = fopen(RECORDS, "a+");
+    char phoneNumber[20];
+    char dateInput[11]; // Chaine pour stocker la saisie de la date
 
 noAccount:
     system("clear");
     printf("\t\t\t===== New record =====\n");
-
-    printf("\nEnter today's date(mm/dd/yyyy):");
-    scanf("%d/%d/%d", &r.deposit.day, &r.deposit.month, &r.deposit.year);
-
-    if (!isValidDate(r.deposit))
+    do
     {
-       goto noAccount;
-    }
-    printf("\nEnter the account number:");
-    scanf("%d", &r.accountNbr);
+        /* code */
+        printf("\nEnter today's date(mm/dd/yyyy): ");
 
-    while (getAccountFromFile(pf, userName, &cr))
-    {
-        if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
+        // Lecture de la chaîne de caractères pour la date
+        scanf("%10s", dateInput);
+
+        // Vérification du format de la date saisie
+        if (strlen(dateInput) != 10 ||
+            sscanf(dateInput, "%2d/%2d/%4d", &r.deposit.day, &r.deposit.month, &r.deposit.year) != 3 ||
+            dateInput[2] != '/' || dateInput[5] != '/')
         {
-            printf("✖ This Account already exists for this user\n\n");
-            goto noAccount;
+            printf("Please enter a date in the format dd/mm/yyyy.\n");
+            // goto noAccount; // Redemande la saisie de la date
         }
-    }
+        // Vérification de la validité de la date
+        else if (!isValidDate(r.deposit))
+        {
+
+            printf("Please enter a valid date.\n %2d/%2d/%4d", r.deposit.month, r.deposit.day, r.deposit.year);
+        }
+        else
+        {
+            break;
+        }
+    } while (1);
+    do
+    {
+        printf("\nEnter the account number: ");
+        char accountNumber[20];
+        scanf("%s", accountNumber);
+
+        // Vérification de la validité du numéro de compte
+        if (!isValidNumber(accountNumber))
+        {
+            printf("Invalid account number. Please enter a valid account number.\n");
+        }
+        else
+        {
+            while (getAccountFromFile(pf, userName, &cr))
+            {
+                if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
+                {
+                    printf("✖ This Account already exists for this user\n\n");
+                }
+                else
+                {
+                    break;
+                }
+            }
+            break;
+        }
+
+    } while (1);
     printf("\nEnter the country:");
     scanf("%s", r.country);
-    printf("\nEnter the phone number:");
-    scanf("%d", &r.phone);
-    printf("\nEnter amount to deposit: $");
-    scanf("%lf", &r.amount);
-    printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
-    scanf("%s", r.accountType);
+
+    printf("\nEnter phone number (max 15 digits): ");
+    do
+    {
+        fgets(phoneNumber, sizeof(phoneNumber), stdin);
+
+        phoneNumber[strcspn(phoneNumber, "\n")] = '\0';
+        // Vérification de la validité du numéro de téléphone
+        if (!isValidPhoneNumber(phoneNumber))
+        {
+            printf("Invalid phone number format or length. Please enter a valid phone number.\n");
+        }
+        else
+        {
+            r.phone = atoll(phoneNumber); // Conversion en long long int
+            break;
+        }
+
+    } while (1);
+    char amountInput[20]; // Pour stocker la saisie du montant
+    do
+    {
+        printf("\nEnter amount to deposit: $");
+        scanf("%s", amountInput);
+
+        // Vérification de la validité du montant
+        if (!isValidAmount(amountInput))
+        {
+            printf("Invalid amount. Please enter a valid decimal number.\n");
+        }
+        else
+        {
+            break;
+        }
+
+    } while (1);
+
+    r.amount = atof(amountInput); // Conversion en double
+    char accountTypeInput[20];    // Pour stocker la saisie du type de compte
+    do
+    {
+        printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice: ");
+        scanf("%s", accountTypeInput);
+
+        // Vérification de la validité du type de compte
+        if (!isValidAccountType(accountTypeInput))
+        {
+            printf("Invalid account type. Please choose a valid account type.\n");
+        }
+        else
+        {
+            break;
+        }
+    } while (1);
+
     getAllRecords(AllRecords, &num);
     r.id = num;
     saveAccountToFile(pf, u, r);
@@ -485,7 +653,7 @@ void removeAccount(struct User u)
         }
         for (int i = 0; i < numRecords; i++)
         {
-            if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr== accountID)
+            if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
             {
                 count++;
             }
