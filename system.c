@@ -274,7 +274,7 @@ void changeCountry(struct Record AllRecords[], int numRecords, char country[100]
 
     for (int i = 0; i < numRecords; i++)
     {
-        if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].id == accountNumber)
+        if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountNumber)
         {
             fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
                     AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
