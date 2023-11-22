@@ -452,7 +452,7 @@ void removeAccount(struct User u)
     getAllRecords(AllRecords, &numRecords);
 
     system("clear");
-    printf("\n\n\t\tEnter the id of the count to remove : ");
+    printf("\n\n\t\tEnter the number of the count to remove : ");
 
     if (scanf("%d", &accountID) != 1)
     {
@@ -462,7 +462,7 @@ void removeAccount(struct User u)
     }
     for (int i = 0; i < numRecords; i++)
     {
-        if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].id == accountID)
+        if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
         {
             count++;
         }
@@ -485,7 +485,7 @@ void removeAccount(struct User u)
         }
         for (int i = 0; i < numRecords; i++)
         {
-            if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].id == accountID)
+            if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr== accountID)
             {
                 count++;
             }

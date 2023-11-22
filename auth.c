@@ -230,7 +230,7 @@ void transferOwner(struct User u)
     }
     for (int i = 0; i < numRecords; i++)
     {
-        if (strcmp(r[i].name, u.name) == 0 && r[i].id == accountID)
+        if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
         {
             count++;
             printf("\t\t\t\t====Transfering your account number: %d\n\n", r[i].id);
