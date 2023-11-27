@@ -266,6 +266,37 @@ bool isValidAccountType(const char *accountType)
 
     return false; // Aucun type de compte valide trouvé
 }
+bool isNumericString(const char *str)
+{
+    while (*str)
+    {
+        if (!isdigit(*str) && *str != '/')
+        {
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+bool isValidCountry(const char *country)
+{
+    size_t length = strlen(country);
+
+    if (length > 15)
+    {
+        return false; // Dépassement de la longueur maximale
+    }
+
+    for (size_t i = 0; i < length; ++i)
+    {
+        if (!isalpha(country[i]))
+        {
+            return false; // Caractères non alphabétiques (y compris les espaces)
+        }
+    }
+
+    return true;
+}
 void createNewAcc(struct User u)
 {
     struct Record r;
@@ -275,92 +306,136 @@ void createNewAcc(struct User u)
     char userName[50];
     FILE *pf = fopen(RECORDS, "a+");
     char phoneNumber[20];
-    char dateInput[11]; // Chaine pour stocker la saisie de la date
+    char countNumber[20];
+    char country[20];
+    char dateInput[15]; // Chaine pour stocker la saisie de la date
+    int re = 0;
 
 noAccount:
     system("clear");
     printf("\t\t\t===== New record =====\n");
-    do
+    // recuperation de la date
+    bool validDate = false;
+    while (!validDate)
     {
-        /* code */
-        printf("\nEnter today's date(mm/dd/yyyy): ");
-
-        // Lecture de la chaîne de caractères pour la date
-        scanf("%10s", dateInput);
-
-        // Vérification du format de la date saisie
-        if (strlen(dateInput) != 10 ||
-            sscanf(dateInput, "%2d/%2d/%4d", &r.deposit.day, &r.deposit.month, &r.deposit.year) != 3 ||
-            dateInput[2] != '/' || dateInput[5] != '/')
+        printf("\nEnter today's date (dd/mm/yyyy): ");
+        if (fgets(dateInput, sizeof(dateInput), stdin))
         {
-            printf("Please enter a date in the format dd/mm/yyyy.\n");
-            // goto noAccount; // Redemande la saisie de la date
-        }
-        // Vérification de la validité de la date
-        else if (!isValidDate(r.deposit))
-        {
-
-            printf("Please enter a valid date.\n %2d/%2d/%4d", r.deposit.month, r.deposit.day, r.deposit.year);
-        }
-        else
-        {
-            break;
-        }
-    } while (1);
-    do
-    {
-        printf("\nEnter the account number: ");
-        char accountNumber[20];
-        scanf("%s", accountNumber);
-
-        // Vérification de la validité du numéro de compte
-        if (!isValidNumber(accountNumber))
-        {
-            printf("Invalid account number. Please enter a valid account number.\n");
-        }
-        else
-        {
-            while (getAccountFromFile(pf, userName, &cr))
+            dateInput[strcspn(dateInput, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
+            if (strlen(dateInput) == 10 && dateInput[2] == '/' && dateInput[5] == '/' && isNumericString(dateInput))
             {
-                if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
+                if (sscanf(dateInput, "%d/%d/%d", &r.deposit.day, &r.deposit.month, &r.deposit.year) == 3)
                 {
-                    printf("✖ This Account already exists for this user\n\n");
-                }
-                else
-                {
-                    break;
+                    validDate = isValidDate(r.deposit);
                 }
             }
-            break;
         }
-
-    } while (1);
-    printf("\nEnter the country:");
-    scanf("%s", r.country);
-
-    printf("\nEnter phone number (max 15 digits): ");
-    do
+        if (!validDate)
+        {
+            printf("Please enter a valid date in the format 'dd/mm/yyyy'.\n");
+        }
+    }
+    // recuperation du numero de compte
+    bool validnumber = false;
+    // bool exist = true;
+    while (!validnumber)
     {
-        fgets(phoneNumber, sizeof(phoneNumber), stdin);
-
-        phoneNumber[strcspn(phoneNumber, "\n")] = '\0';
-        // Vérification de la validité du numéro de téléphone
-        if (!isValidPhoneNumber(phoneNumber))
+        printf("\nEnter the account number: ");
+        if (fgets(countNumber, sizeof(countNumber), stdin))
         {
-            printf("Invalid phone number format or length. Please enter a valid phone number.\n");
+            countNumber[strcspn(countNumber, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
+            if (isValidNumber(countNumber))
+            {
+                validnumber = true;
+            }
         }
-        else
+        if (!validnumber)
         {
-            r.phone = atoll(phoneNumber); // Conversion en long long int
-            break;
+            printf("Please enter a valid number\n");
         }
 
-    } while (1);
+        sscanf(countNumber, "%d", &r.accountNbr);
+        while (getAccountFromFile(pf, userName, &cr))
+        {
+            if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
+            {
+                printf("✖ This Account already exists for this user\n\n");
+                validnumber = false;
+                goto noAccount;
+            }
+        }
+    }
+    // do
+    // {
+    //     printf("\nEnter the account number: ");
+    //     char accountNumber[20];
+    //     scanf("%s", accountNumber);
+
+    //     // Vérification de la validité du numéro de compte
+    //     if (!isValidNumber(accountNumber))
+    //     {
+    //         printf("Invalid account number. Please enter a valid account number.\n");
+    //     }
+    //     else
+    //     {
+    //         while (getAccountFromFile(pf, userName, &cr))
+    //         {
+    //             if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
+    //             {
+    //                 printf("✖ This Account already exists for this user\n\n");
+    //             }
+    //             else
+    //             {
+    //                 break;
+    //             }
+    //         }
+    //         break;
+    //     }
+
+    // } while (1);
+    // recuperation du pays
+    bool validcountry = false;
+    while (!validcountry)
+    {
+        printf("\nEnter the country : ");
+        if (fgets(country, sizeof(country), stdin))
+        {
+            country[strcspn(country, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
+            if (strlen(country) <= 15 && isValidCountry(country))
+            {
+                validcountry = true;
+            }
+        }
+        if (!validcountry)
+        {
+            printf("Please enter a valid country , up to 15 letter with no spaces.\n");
+        }
+    }
+
+    bool validPhone = false;
+    while (!validPhone)
+    {
+        printf("\nEnter the phone number (up to 15 digits with no spaces): ");
+        if (fgets(phoneNumber, sizeof(phoneNumber), stdin))
+        {
+            phoneNumber[strcspn(phoneNumber, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
+            if (strlen(phoneNumber) <= 15 && isValidNumber(phoneNumber))
+            {
+                validPhone = true;
+            }
+        }
+        if (!validPhone)
+        {
+            printf("Please enter a valid phone number, up to 15 digits with no spaces.\n");
+        }
+    }
     char amountInput[20]; // Pour stocker la saisie du montant
     do
     {
         printf("\nEnter amount to deposit: $");
-        scanf("%s", amountInput);
+        fgets(amountInput, sizeof(amountInput), stdin);
+
+        amountInput[strcspn(amountInput, "\n")] = '\0'; // Supprimer le saut de ligne s'il est présent
 
         // Vérification de la validité du montant
         if (!isValidAmount(amountInput))

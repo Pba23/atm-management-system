@@ -1,5 +1,16 @@
 #include "header.h"
-
+bool isNumericString2(const char *str)
+{
+    while (*str)
+    {
+        if (!isdigit(*str))
+        {
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
 void updateAccountMenuAgain(struct User u)
 {
     int re = 0;
@@ -153,6 +164,7 @@ void updateAccountMenu(struct User u)
 {
     int boolean = 0;
     char input[10];
+    char input1[10];
     char userName[100];
     struct Record r;
     int id;
@@ -167,140 +179,280 @@ void updateAccountMenu(struct User u)
     printf("\t\t====== Update account, %s =====\n\n", u.name);
     do
     {
-        printf("\n\n\n\n\n\t\t\t\tEnter your account number:");
-        int j = 1;
-        if (scanf("%d", &id) != 1)
+        printf("\n\n\n\n\n\t\t\t\tEnter your account number: ");
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = '\0';
+        if (!isNumericString(input))
         {
-            printf("Invalid input. Please enter a valid option.\n");
-            while (getchar() != '\n')
-                ; // Vide le tampon d'entrée
+            printf("Invalid input. Please enter a valid account number.\n");
         }
         else
         {
-            while (getAccountFromFile(pf, userName, &r))
+            if (sscanf(input, "%d", &id) != 1)
             {
+                printf("Invalid input. Please enter a valid option.\n");
+            }
+            else
+            {
+                // Traitement du reste du code avec la modification de scanf par fgets...
 
-                if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
+                while (getAccountFromFile(pf, userName, &r))
                 {
-                    counter++;
-                    printf("\n\t\t-->> What would you update / register :\n");
-                    printf("\n\t\t[1]- phone number\n");
-                    printf("\n\t\t[2]- country\n");
-                    do
+                    if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
                     {
+                        counter++;
+                        printf("\n\t\t-->> What would you update / register :\n");
+                        printf("\n\t\t[1]- phone number\n");
+                        printf("\n\t\t[2]- country\n");
 
-                        printf("Choose an option: ");
-                        if (scanf("%d", &option) != 1)
+                        do
                         {
-                            printf("Invalid input. Please enter a valid option.\n");
-                            while (getchar() != '\n')
-                                ; // Vide le tampon d'entrée
-                        }
-                        else
-                        {
-                            switch (option)
+
+                            printf("Choose an option: ");
+                            fgets(input1, sizeof(input1), stdin);
+                            input1[strcspn(input1, "\n")] = '\0';
+                            if (!isNumericString(input1))
                             {
-                            case 1:
-                                int phone;
-                                int opt;
-                                system("clear");
-                                do
+                                printf("Invalid input. Please enter a valid option.\n");
+                            }
+                            else
+                            {
+                                scanf(input1, "%d", option);
+                                switch (option)
                                 {
-                                    printf("\n✔ Success !\n\n");
-                                    printf("Give the new phone number:");
-                                    if (scanf("%d", &phone) != 1)
+                                case 1:
+                                    int phone;
+                                    int opt;
+                                    system("clear");
+                                    do
                                     {
-                                        printf("Invalid number. Please enter a valid number.\n");
-                                        while (getchar() != '\n')
-                                            ; // Vide le tampon d'entrée
-                                    }
-                                    else
-                                    {
-                                        getAllRecords(AllRecords, &numRecords);
-                                        changeNumber(AllRecords, numRecords, phone, u, id);
                                         printf("\n✔ Success !\n\n");
-                                        do
+                                        printf("Give the new phone number:");
+                                        if (scanf("%d", &phone) != 1)
                                         {
-                                            printf("\n\t\tEnter 1 to return to the main menu, or 2 to exit: ");
-                                            if (scanf("%d", &choice) != 1)
+                                            printf("Invalid number. Please enter a valid number.\n");
+                                            while (getchar() != '\n')
+                                                ; // Vide le tampon d'entrée
+                                        }
+                                        else
+                                        {
+                                            getAllRecords(AllRecords, &numRecords);
+                                            changeNumber(AllRecords, numRecords, phone, u, id);
+                                            printf("\n✔ Success !\n\n");
+                                            do
                                             {
-                                                printf("\nInvalid input. Please enter a valid option.\n");
-                                                while (getchar() != '\n')
-                                                    ;
-                                            }
-                                            else
-                                            {
-                                                switch (choice)
+                                                printf("\n\t\tEnter 1 to return to the main menu, or 2 to exit: ");
+                                                if (scanf("%d", &choice) != 1)
                                                 {
-                                                case 1:
-                                                    mainMenu(u);
-                                                    break;
-                                                case 2:
-                                                    exit(0);
-                                                    break;
-                                                default:
-                                                    printf("Invalid option. Please enter a valid option.\n");
-                                                    break;
+                                                    printf("\nInvalid input. Please enter a valid option.\n");
+                                                    while (getchar() != '\n')
+                                                        ;
                                                 }
-                                            }
-                                        } while (1);
-                                        break;
-                                    }
-                                    /* code */
-                                }
-                                while (1)
-                                    ;
-
-                            case 2:
-                                char country[100];
-                                printf("Give The new Country:");
-                                scanf("%s", country);
-                                getAllRecords(AllRecords, &numRecords);
-                                changeCountry(AllRecords, numRecords, country, u, id);
-                                printf("\n✔ Success !\n\n");
-
-                                do
-                                {
-                                    printf("\n\t\t 1 to return to the main menu, or 2 to exit: ");
-                                    if (scanf("%d", &choice) != 1)
-                                    {
-                                        printf("\nInvalid input. Please enter a valid option.\n");
-                                        while (getchar() != '\n')
-                                            ;
-                                    }
-                                    else
-                                    {
-                                        switch (choice)
-                                        {
-                                        case 1:
-                                            mainMenu(u);
-                                            break;
-                                        case 2:
-                                            exit(0);
-                                            break;
-                                        default:
-                                            printf("Invalid option. Please enter a valid option.\n");
+                                                else
+                                                {
+                                                    switch (choice)
+                                                    {
+                                                    case 1:
+                                                        mainMenu(u);
+                                                        break;
+                                                    case 2:
+                                                        exit(0);
+                                                        break;
+                                                    default:
+                                                        printf("Invalid option. Please enter a valid option.\n");
+                                                        break;
+                                                    }
+                                                }
+                                            } while (1);
                                             break;
                                         }
-                                    }
-                                } while (1);
-                                break;
-                            default:
-                                printf("Please choose a valid option: ");
+                                        /* code */
+                                    } while (1);
+
+                                case 2:
+                                    char country[100];
+                                    printf("Give The new Country:");
+                                    scanf("%s", country);
+                                    getAllRecords(AllRecords, &numRecords);
+                                    changeCountry(AllRecords, numRecords, country, u, id);
+                                    printf("\n✔ Success !\n\n");
+
+                                    do
+                                    {
+                                        printf("\n\t\t 1 to return to the main menu, or 2 to exit: ");
+                                        if (scanf("%d", &choice) != 1)
+                                        {
+                                            printf("\nInvalid input. Please enter a valid option.\n");
+                                            while (getchar() != '\n')
+                                                ;
+                                        }
+                                        else
+                                        {
+                                            switch (choice)
+                                            {
+                                            case 1:
+                                                mainMenu(u);
+                                                break;
+                                            case 2:
+                                                exit(0);
+                                                break;
+                                            default:
+                                                printf("Invalid option. Please enter a valid option.\n");
+                                                break;
+                                            }
+                                        }
+                                    } while (1);
+                                    break;
+                                default:
+                                    printf("Please choose a valid option: ");
+                                    break;
+                                }
                                 break;
                             }
-                        }
-                    } while (1);
-                    break;
+
+                        } while (1);
+                        break;
+                    }
                 }
-                // else
-                // {
-                //     printf("Choose a valid option: ");
-                // }
+                break;
             }
-            break;
         }
+
     } while (1);
+    // do
+    // {
+    //     printf("\n\n\n\n\n\t\t\t\tEnter your account number:");
+    //     int j = 1;
+    //     if (scanf("%d", &id) != 1)
+    //     {
+    //         printf("Invalid input. Please enter a valid option.\n");
+    //         while (getchar() != '\n')
+    //             ; // Vide le tampon d'entrée
+    //     }
+    //     else
+    //     {
+    //         while (getAccountFromFile(pf, userName, &r))
+    //         {
+
+    //             if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
+    //             {
+    //                 counter++;
+    //                 printf("\n\t\t-->> What would you update / register :\n");
+    //                 printf("\n\t\t[1]- phone number\n");
+    //                 printf("\n\t\t[2]- country\n");
+    //                 do
+    //                 {
+
+    //                     printf("Choose an option: ");
+    //                     if (scanf("%d", &option) != 1)
+    //                     {
+    //                         printf("Invalid input. Please enter a valid option.\n");
+    //                         while (getchar() != '\n')
+    //                             ; // Vide le tampon d'entrée
+    //                     }
+    //                     else
+    //                     {
+    //                         switch (option)
+    //                         {
+    //                         case 1:
+    //                             int phone;
+    //                             int opt;
+    //                             system("clear");
+    //                             do
+    //                             {
+    //                                 printf("\n✔ Success !\n\n");
+    //                                 printf("Give the new phone number:");
+    //                                 if (scanf("%d", &phone) != 1)
+    //                                 {
+    //                                     printf("Invalid number. Please enter a valid number.\n");
+    //                                     while (getchar() != '\n')
+    //                                         ; // Vide le tampon d'entrée
+    //                                 }
+    //                                 else
+    //                                 {
+    //                                     getAllRecords(AllRecords, &numRecords);
+    //                                     changeNumber(AllRecords, numRecords, phone, u, id);
+    //                                     printf("\n✔ Success !\n\n");
+    //                                     do
+    //                                     {
+    //                                         printf("\n\t\tEnter 1 to return to the main menu, or 2 to exit: ");
+    //                                         if (scanf("%d", &choice) != 1)
+    //                                         {
+    //                                             printf("\nInvalid input. Please enter a valid option.\n");
+    //                                             while (getchar() != '\n')
+    //                                                 ;
+    //                                         }
+    //                                         else
+    //                                         {
+    //                                             switch (choice)
+    //                                             {
+    //                                             case 1:
+    //                                                 mainMenu(u);
+    //                                                 break;
+    //                                             case 2:
+    //                                                 exit(0);
+    //                                                 break;
+    //                                             default:
+    //                                                 printf("Invalid option. Please enter a valid option.\n");
+    //                                                 break;
+    //                                             }
+    //                                         }
+    //                                     } while (1);
+    //                                     break;
+    //                                 }
+    //                                 /* code */
+    //                             } while (1);
+
+    //                         case 2:
+    //                             char country[100];
+    //                             printf("Give The new Country:");
+    //                             scanf("%s", country);
+    //                             getAllRecords(AllRecords, &numRecords);
+    //                             changeCountry(AllRecords, numRecords, country, u, id);
+    //                             printf("\n✔ Success !\n\n");
+
+    //                             do
+    //                             {
+    //                                 printf("\n\t\t 1 to return to the main menu, or 2 to exit: ");
+    //                                 if (scanf("%d", &choice) != 1)
+    //                                 {
+    //                                     printf("\nInvalid input. Please enter a valid option.\n");
+    //                                     while (getchar() != '\n')
+    //                                         ;
+    //                                 }
+    //                                 else
+    //                                 {
+    //                                     switch (choice)
+    //                                     {
+    //                                     case 1:
+    //                                         mainMenu(u);
+    //                                         break;
+    //                                     case 2:
+    //                                         exit(0);
+    //                                         break;
+    //                                     default:
+    //                                         printf("Invalid option. Please enter a valid option.\n");
+    //                                         break;
+    //                                     }
+    //                                 }
+    //                             } while (1);
+    //                             break;
+    //                         default:
+    //                             printf("Please choose a valid option: ");
+    //                             break;
+    //                         }
+    //                     }
+    //                 } while (1);
+    //                 break;
+    //             }
+    //             // else
+    //             // {
+    //             //     printf("Choose a valid option: ");
+    //             // }
+    //         }
+    //         break;
+    //     }
+    // } while (1);
     if (counter == 0)
     {
         updateAccountMenuAgain(u);
