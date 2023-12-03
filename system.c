@@ -365,35 +365,6 @@ noAccount:
             }
         }
     }
-    // do
-    // {
-    //     printf("\nEnter the account number: ");
-    //     char accountNumber[20];
-    //     scanf("%s", accountNumber);
-
-    //     // Vérification de la validité du numéro de compte
-    //     if (!isValidNumber(accountNumber))
-    //     {
-    //         printf("Invalid account number. Please enter a valid account number.\n");
-    //     }
-    //     else
-    //     {
-    //         while (getAccountFromFile(pf, userName, &cr))
-    //         {
-    //             if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
-    //             {
-    //                 printf("✖ This Account already exists for this user\n\n");
-    //             }
-    //             else
-    //             {
-    //                 break;
-    //             }
-    //         }
-    //         break;
-    //     }
-
-    // } while (1);
-    // recuperation du pays
     bool validcountry = false;
     while (!validcountry)
     {
