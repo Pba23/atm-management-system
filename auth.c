@@ -215,79 +215,98 @@ void transferOwner(struct User u)
     struct Record r[100];
     int accountID;
     int count = 0;
+    char number[25];
     struct User users[100];
     int numUsers;
     char username[50];
     getAllRecords(r, &numRecords);
     system("clear");
-    printf("\n\n\t\tEnter the id of the account you want to transfer ownership : ");
+    do
+    {
+        printf("\n\n\t\tEnter the id of the account you want to transfer ownership : ");
+        fgets(number, sizeof(number), stdin);
+        number[strcspn(number, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
 
-    if (scanf("%d", &accountID) != 1)
-    {
-        printf("Invalid input. Please enter a valid option.\n");
-        while (getchar() != '\n')
-            ; // Vide le tampon d'entrée
-    }
-    for (int i = 0; i < numRecords; i++)
-    {
-        if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
+        // Vérifier si la chaîne contient uniquement des chiffres
+        int isvalid = 1;
+        for (int i = 0; number[i] != '\0'; i++)
         {
-            count++;
-            printf("\t\t\t\t====Transfering your account number: %d\n\n", r[i].id);
-            printf("Account number: %d\n", r[i].accountNbr);
-            printf("Deposit Date: %d/%d/%d\n", r[i].deposit.day, r[i].deposit.month, r[i].deposit.year);
-            printf("Country: %s\n", r[i].country);
-            printf("Phone number: %d\n", r[i].phone);
-            printf("Amount deposited: %.2f\n", r[i].amount);
-            printf("Type Of Account : %s\n", r[i].accountType);
+            if (number[i] < '0' || number[i] > '9')
+            {
+                isvalid = 0;
+                break;
+            }
         }
-    }
-
-    if (count == 0)
-    {
-        printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
-        stayOrQuit(u);
-    }
-    else
-    {
-        checkIn(users, &numUsers);
-        printf("Which user you wantg to tranfer ownership (user name): ");
-        scanf("%s", username);
-        if (!userExists(users, numUsers, username))
+        if (!isvalid)
         {
-            printf("\n\n\t\tThis user does'nt exist\n");
+            printf("Invalid input. Please enter a valid option.\n");
         }
         else
         {
-
-            FILE *fp;
-            char filename[] = "./data/records.txt";
-
-            if ((fp = fopen(filename, "w")) == NULL)
-            {
-                printf("Error oppenning file : %s\n", filename);
-                return;
-            }
+            accountID = atoi(number);
             for (int i = 0; i < numRecords; i++)
             {
-                if (strcmp(r[i].name, u.name) == 0 && r[i].id == accountID)
+                if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
                 {
-                    fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
-                            r[i].id, r[i].userId, username, r[i].accountNbr,
-                            r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
-                            r[i].country, r[i].phone, r[i].amount, r[i].accountType);
+                    count++;
+                    printf("\t\t\t\t====Transfering your account number: %d\n\n", r[i].id);
+                    printf("Account number: %d\n", r[i].accountNbr);
+                    printf("Deposit Date: %d/%d/%d\n", r[i].deposit.day, r[i].deposit.month, r[i].deposit.year);
+                    printf("Country: %s\n", r[i].country);
+                    printf("Phone number: %d\n", r[i].phone);
+                    printf("Amount deposited: %.2f\n", r[i].amount);
+                    printf("Type Of Account : %s\n", r[i].accountType);
+                }
+            }
+
+            if (count == 0)
+            {
+                printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
+                stayOrQuit(u);
+            }
+            else
+            {
+                checkIn(users, &numUsers);
+                printf("Which user you want to tranfer ownership (user name): ");
+                fgets(username, sizeof(username), stdin);
+                username[strcspn(username, "\n")] = '\0';
+                if (!userExists(users, numUsers, username))
+                {
+                    printf("\n\n\t\tThis user does'nt exist\n");
                 }
                 else
                 {
-                    fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
-                            r[i].id, r[i].userId, r[i].name, r[i].accountNbr,
-                            r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
-                            r[i].country, r[i].phone, r[i].amount, r[i].accountType);
+
+                    FILE *fp;
+                    char filename[] = "./data/records.txt";
+
+                    if ((fp = fopen(filename, "w")) == NULL)
+                    {
+                        printf("Error oppenning file : %s\n", filename);
+                        return;
+                    }
+                    for (int i = 0; i < numRecords; i++)
+                    {
+                        if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
+                        {
+                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                                    r[i].id, r[i].userId, username, r[i].accountNbr,
+                                    r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
+                                    r[i].country, r[i].phone, r[i].amount, r[i].accountType);
+                        }
+                        else
+                        {
+                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                                    r[i].id, r[i].userId, r[i].name, r[i].accountNbr,
+                                    r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
+                                    r[i].country, r[i].phone, r[i].amount, r[i].accountType);
+                        }
+                    }
+                    fclose(fp);
+                    printf("✔Success change");
                 }
+                stayOrQuit(u);
             }
-            fclose(fp);
-            printf("✔Success change");
         }
-        stayOrQuit(u);
-    }
+    } while (1);
 }

@@ -603,38 +603,68 @@ void interestMessage(struct Record r)
         }
     }
 }
+char error[50];
 void countDetail(struct User u)
 {
     char userName[100];
+    char number[50];
     FILE *pf = fopen(RECORDS, "r");
     struct Record r;
     int id;
     int count = 0;
     system("clear");
     printf("\t\t====== Account datail =====\n\n");
-    printf("\n\n\n\n\n\t\t\t\tEnter your account number:");
-    int counter;
-    scanf("%d", &id);
-    while (getAccountFromFile(pf, userName, &r))
+    printf("%s", error);
+    do
     {
-        if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
+        /* code */
+        printf("\n\n\n\n\n\t\t\t\tEnter your account number:");
+        fgets(number, sizeof(number), stdin);
+        number[strcspn(number, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+
+        // Vérifier si la chaîne contient uniquement des chiffres
+        int isvalid = 1;
+        for (int i = 0; number[i] != '\0'; i++)
         {
-            printf("Account number: %d\n", r.accountNbr);
-            printf("Deposit Date: %d/%d/%d\n", r.deposit.day, r.deposit.month, r.deposit.year);
-            printf("Country: %s\n", r.country);
-            printf("Phone number: %d\n", r.phone);
-            printf("Amount deposited: %.2f\n", r.amount);
-            printf("Type Of Account : %s\n", r.accountType);
-            interestMessage(r);
-            stayOrQuit(u);
-            count++;
+            if (number[i] < '0' || number[i] > '9')
+            {
+                isvalid = 0;
+                break;
+            }
         }
-    }
-    if (count == 0)
-    {
-        printf("This account id does'nt exists or is'nt yours");
-        stayOrQuit(u);
-    }
+        if (!isvalid)
+        {
+            printf("Invalid input. Please enter a valid option.\n");
+            // while (getchar() != '\n')
+            //     ; // Vide le tampon d'entrée
+        }
+        else
+        {
+            id = atoi(number);
+            while (getAccountFromFile(pf, userName, &r))
+            {
+                if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
+                {
+                    printf("Account number: %d\n", r.accountNbr);
+                    printf("Deposit Date: %d/%d/%d\n", r.deposit.day, r.deposit.month, r.deposit.year);
+                    printf("Country: %s\n", r.country);
+                    printf("Phone number: %d\n", r.phone);
+                    printf("Amount deposited: %.2f\n", r.amount);
+                    printf("Type Of Account : %s\n", r.accountType);
+                    interestMessage(r);
+                    stayOrQuit(u);
+                    count++;
+                }
+            }
+        }
+        if (count == 0)
+        {
+            strcpy(error, "This account id does'nt exists or is'nt yours");
+            // printf("%s", error);
+            countDetail(u);
+            // stayOrQuit(u);
+        }
+    } while (1);
 }
 
 // void (struct User u)
@@ -692,58 +722,78 @@ void removeAccount(struct User u)
     struct Record AllRecords[100];
     int accountID;
     int count = 0;
+    char number[20];
     getAllRecords(AllRecords, &numRecords);
 
     system("clear");
-    printf("\n\n\t\tEnter the number of the count to remove : ");
+    do
+    {
+        printf("\n\n\t\tEnter the number of the count to remove : ");
+        fgets(number, sizeof(number), stdin);
+        number[strcspn(number, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
 
-    if (scanf("%d", &accountID) != 1)
-    {
-        printf("Invalid input. Please enter a valid option.\n");
-        while (getchar() != '\n')
-            ; // Vide le tampon d'entrée
-    }
-    for (int i = 0; i < numRecords; i++)
-    {
-        if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
+        // Vérifier si la chaîne contient uniquement des chiffres
+        int isvalid = 1;
+        for (int i = 0; number[i] != '\0'; i++)
         {
-            count++;
-        }
-    }
-
-    if (count == 0)
-    {
-        printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
-        stayOrQuit(u);
-    }
-    else
-    {
-        FILE *fp;
-        char filename[] = "./data/records.txt";
-
-        if ((fp = fopen(filename, "w")) == NULL)
-        {
-            printf("Error oppenning file : %s\n", filename);
-            return;
-        }
-        for (int i = 0; i < numRecords; i++)
-        {
-            if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
+            if (number[i] < '0' || number[i] > '9')
             {
-                count++;
+                isvalid = 0;
+                break;
+            }
+        }
+        if (!isvalid)
+        {
+            printf("Invalid input. Please enter a valid option.\n");
+            // Vide le tampon d'entrée
+        }
+        else
+        {
+            accountID=atoi(number);
+            for (int i = 0; i < numRecords; i++)
+            {
+                if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
+                {
+                    count++;
+                }
+            }
+
+            if (count == 0)
+            {
+                printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
+                stayOrQuit(u);
             }
             else
             {
-                fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
-                        AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
-                        AllRecords[i].deposit.day, AllRecords[i].deposit.month, AllRecords[i].deposit.year,
-                        AllRecords[i].country, AllRecords[i].phone, AllRecords[i].amount, AllRecords[i].accountType);
+                FILE *fp;
+                char filename[] = "./data/records.txt";
+
+                if ((fp = fopen(filename, "w")) == NULL)
+                {
+                    printf("Error oppenning file : %s\n", filename);
+                    return;
+                }
+                for (int i = 0; i < numRecords; i++)
+                {
+                    if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                                AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
+                                AllRecords[i].deposit.day, AllRecords[i].deposit.month, AllRecords[i].deposit.year,
+                                AllRecords[i].country, AllRecords[i].phone, AllRecords[i].amount, AllRecords[i].accountType);
+                    }
+                }
+                fclose(fp);
+            }
+            {
+                success(u);
+                stayOrQuit(u);
             }
         }
-        fclose(fp);
-    }
-    {
-        success(u);
-        stayOrQuit(u);
-    }
+        /* code */
+    } while (1);
 }

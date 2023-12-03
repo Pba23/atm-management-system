@@ -10,19 +10,33 @@ void transactionMenu(struct User u)
     int count = 0;
     int choice;
     char op[10];
+    char number[20];
+    char choiceStr[20];
     do
     {
         system("clear");
         printf("\n\t\t\t====Transaction Menu\n");
         printf("Enter your account number: ");
-        if (scanf("%d", &id) != 1)
+        fgets(number, sizeof(number), stdin);
+        number[strcspn(number, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+
+        // Vérifier si la chaîne contient uniquement des chiffres
+        int isvalid = 1;
+        for (int i = 0; number[i] != '\0'; i++)
+        {
+            if (number[i] < '0' || number[i] > '9')
+            {
+                isvalid = 0;
+                break;
+            }
+        }
+        if (!isvalid)
         {
             printf("Invalid input. Please enter a valid option.\n");
-            while (getchar() != '\n')
-                ; // Vide le tampon d'entrée
         }
         else
         {
+            id = atoi(number);
             struct Record r[100];
             int numRecord;
             getAllRecords(r, &numRecord);
@@ -41,38 +55,54 @@ void transactionMenu(struct User u)
                             printf("[3]. Return to Main Menu\n");
                             printf("[4]. Exit\n");
                             printf("Enter your choice: ");
+                            fgets(choiceStr, sizeof(choiceStr), stdin);
+                            choiceStr[strcspn(choiceStr, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
 
-                            if (scanf("%d", &choice) != 1)
+                            // Vérifier si la chaîne contient uniquement des chiffres
+                            int isvalidChoice = 1;
+                            for (int i = 0; choiceStr[i] != '\0'; i++)
+                            {
+                                if (choiceStr[i] < '0' || choiceStr[i] > '9')
+                                {
+                                    isvalidChoice = 0;
+                                    break;
+                                }
+                            }
+
+                            if (!isvalidChoice)
                             {
                                 printf("Invalid input. Please enter a valid option.\n");
-                                while (getchar() != '\n')
-                                    ; // Vide le tampon d'entrée
                             }
                             else
                             {
                                 int validInput = 0;
-
+                                choice = atoi(choiceStr);
+                                char amountInput[20]; // Pour stocker la saisie du montant
                                 if (choice == 1)
                                 {
 
+                                    // Demandez à l'utilisateur de saisir le montant du dépôt
                                     do
                                     {
-                                        // Demandez à l'utilisateur de saisir le montant du dépôt
-                                        printf("Give amount to deposit :");
-                                        if (scanf("%f", &amount) == 1)
+                                        printf("\nEnter amount to deposit: $");
+                                        fgets(amountInput, sizeof(amountInput), stdin);
+
+                                        amountInput[strcspn(amountInput, "\n")] = '\0'; // Supprimer le saut de ligne s'il est présent
+
+                                        // Vérification de la validité du montant
+                                        if (!isValidAmount(amountInput))
                                         {
+                                            printf("Invalid amount. Please enter a valid decimal number.\n");
+                                        }
+                                        else
+                                        {
+                                            amount = atof(amountInput);
                                             r[i].amount = r[i].amount + amount;
                                             validInput = 1;
                                             break;
                                         }
-                                        else
-                                        {
-                                            // La saisie n'est pas un nombre valide, demandez de ressaisir
-                                            printf("Invalid input. Please enter a valid deposit amount.\n");
-                                            while (getchar() != '\n')
-                                                ; // Vide le tampon d'entrée
-                                        }
-                                    } while (!validInput);
+
+                                    } while (1);
                                     break;
                                 }
                                 else if (choice == 2)
@@ -82,8 +112,12 @@ void transactionMenu(struct User u)
                                     {
                                         // Demandez à l'utilisateur de saisir le montant du dépôt
                                         printf("Give amount to withdraw:");
-                                        if (scanf("%f", &amount) == 1)
+                                        fgets(amountInput, sizeof(amountInput), stdin);
+
+                                        amountInput[strcspn(amountInput, "\n")] = '\0'; 
+                                        if (isValidAmount(amountInput))
                                         {
+                                            amount = atof(amountInput);
                                             if (amount <= r[i].amount)
                                             {
                                                 r[i].amount = r[i].amount - amount;
