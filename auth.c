@@ -173,9 +173,9 @@ void registerMenu(char a[50], char pass[50])
         }
         else
         {
-            if (strchr(input, ' ') != NULL)
+            if (strchr(input, ' ') != NULL || !isValidCountry(input))
             {
-                printf("\n\nThe name should not contain a space. Try again.\n");
+                printf("\n\nThe name should contains up to 15 letter with no spaces.\n. Try again.\n");
             }
             else
             {

@@ -413,9 +413,9 @@ noAccount:
         amountInput[strcspn(amountInput, "\n")] = '\0'; // Supprimer le saut de ligne s'il est présent
 
         // Vérification de la validité du montant
-        if (!isValidAmount(amountInput))
+        if (!isValidAmount(amountInput) || atof(amountInput)== 0)
         {
-            printf("Invalid amount. Please enter a valid decimal number.\n");
+            printf("Invalid amount. Please enter a valid decimal superior to 0 number.\n");
         }
         else
         {
