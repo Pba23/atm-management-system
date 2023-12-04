@@ -57,7 +57,7 @@ bool isValidAmount(const char *amount)
 }
 void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
 {
-    fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n\n",
+    fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
             r.id,
             u.id,
             u.name,
@@ -381,9 +381,11 @@ noAccount:
         {
             printf("Please enter a valid country , up to 15 letter with no spaces.\n");
         }
+        sscanf(country, "%s", r.country);
     }
 
     bool validPhone = false;
+    int phone;
     while (!validPhone)
     {
         printf("\nEnter the phone number (up to 15 digits with no spaces): ");
@@ -399,6 +401,8 @@ noAccount:
         {
             printf("Please enter a valid phone number, up to 15 digits with no spaces.\n");
         }
+        r.phone = atoi(phoneNumber);
+        
     }
     char amountInput[20]; // Pour stocker la saisie du montant
     do
@@ -425,8 +429,8 @@ noAccount:
     do
     {
         printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice: ");
-        scanf("%s", accountTypeInput);
-
+        fgets(accountTypeInput, sizeof(accountTypeInput), stdin);
+        accountTypeInput[strcspn(accountTypeInput, "\n")] = '\0';
         // Vérification de la validité du type de compte
         if (!isValidAccountType(accountTypeInput))
         {
@@ -434,6 +438,7 @@ noAccount:
         }
         else
         {
+        sscanf(accountTypeInput, "%s", r.accountType);
             break;
         }
     } while (1);
@@ -720,7 +725,7 @@ void removeAccount(struct User u)
         }
         else
         {
-            accountID=atoi(number);
+            accountID = atoi(number);
             for (int i = 0; i < numRecords; i++)
             {
                 if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountID)
