@@ -7,13 +7,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-void mainMenu(struct User u) {
+void mainMenu(struct User u)
+{
     int option;
     char input[50]; // Chaine de caractères pour stocker l'entrée utilisateur
 
-    while (1) {
+    while (1)
+    {
         system("clear");
-        printf("\n\n\t\t======= ATM =======\n\n");
+        printf("\n\n\t\t======= ATM ======= %d \n\n", u.id);
         printf("\n\t\t-->> Feel free to choose one of the options below <<--\n");
         printf("\n\t\t[1]- Create a new account\n");
         printf("\n\t\t[2]- Update account information\n");
@@ -25,46 +27,50 @@ void mainMenu(struct User u) {
         printf("\n\t\t[8]- Exit\n");
         printf("\nEnter your choice: ");
 
-        if (fgets(input, sizeof(input), stdin)) {
+        if (fgets(input, sizeof(input), stdin))
+        {
             input[strcspn(input, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
 
-            if (isNumber(input)) {
+            if (isNumber(input))
+            {
                 option = atoi(input); // Convertir la chaîne en entier
-                switch (option) {
-                    case 1:
-                        createNewAcc(u);
-                        break;
-                    case 2:
-                        updateAccountMenu(u);
-                        break;
-                    case 3:
-                        countDetail(u);
-                        break;
-                    case 4:
-                        checkAllAccounts(u);
-                        break;
-                    case 5:
-                        transactionMenu(u);
-                        break;
-                    case 6:
-                        removeAccount(u);
-                        break;
-                    case 7:
-                        transferOwner(u);
-                        break;
-                    case 8:
-                        exit(0); // Utilisation de 0 pour une sortie propre
-                        break;
-                    default:
-                        printf("Invalid operation!\n");
+                switch (option)
+                {
+                case 1:
+                    createNewAcc(u);
+                    break;
+                case 2:
+                    updateAccountMenu(u);
+                    break;
+                case 3:
+                    countDetail(u);
+                    break;
+                case 4:
+                    checkAllAccounts(u);
+                    break;
+                case 5:
+                    transactionMenu(u);
+                    break;
+                case 6:
+                    removeAccount(u);
+                    break;
+                case 7:
+                    transferOwner(u);
+                    break;
+                case 8:
+                    exit(0); // Utilisation de 0 pour une sortie propre
+                    break;
+                default:
+                    printf("Invalid operation!\n");
                 }
-            } else {
+            }
+            else
+            {
                 printf("Please enter a valid number.\n");
             }
         }
     }
 }
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -121,6 +127,7 @@ void initMenu(struct User *u)
                 break;
             case 2:
                 registerMenu(u->name, u->password);
+
                 break;
             case 3:
                 exit(1);

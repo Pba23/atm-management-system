@@ -1,4 +1,5 @@
 #include "header.h"
+// #include "auth.c"
 #include <stdbool.h>
 #include <ctype.h>
 const char *RECORDS = "./data/records.txt";
@@ -13,6 +14,31 @@ int isNumber(const char *input)
         input++;
     }
     return 1; // Tous les caractères sont des chiffres
+}
+void checkIn1(struct User users[], int *numUsers)
+{
+    FILE *fp;
+    char filename[] = "data/users.txt"; // Nom du fichier
+    int count = 0;                      // Compteur du nombre d'utilisateurs
+
+    // Ouvrir le fichier en mode lecture
+    if ((fp = fopen(filename, "r")) == NULL)
+    {
+        printf("Erreur lors de l'ouverture du fichier\n");
+        exit(1);
+    }
+
+    // Lire les données du fichier
+    while (fscanf(fp, "%d %s %s", &users[count].id, users[count].name, users[count].password) != EOF)
+    {
+        count++;
+    }
+
+    // Fermer le fichier
+    fclose(fp);
+
+    // Mettre à jour le nombre d'utilisateurs
+    *numUsers = count;
 }
 int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
 {
@@ -57,6 +83,16 @@ bool isValidAmount(const char *amount)
 }
 void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
 {
+    struct User users [50];
+    int num;
+    checkIn1(users,&num);
+    for (int i = 0; i < num; i++)
+    {
+       if (strcmp(users[i].name,u.name)==0){
+        u.id = users[i].id;
+       }
+    }
+    
     fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
             r.id,
             u.id,
@@ -311,9 +347,8 @@ void createNewAcc(struct User u)
     char dateInput[15]; // Chaine pour stocker la saisie de la date
     int re = 0;
 
-noAccount:
     system("clear");
-    printf("\t\t\t===== New record =====\n");
+    printf("\t\t\t===== New record ===== n = %s\n",u.name);
     // recuperation de la date
     bool validDate = false;
     while (!validDate)
@@ -335,6 +370,7 @@ noAccount:
             printf("Please enter a valid date in the format 'dd/mm/yyyy'.\n");
         }
     }
+noAccount:
     // recuperation du numero de compte
     bool validnumber = false;
     // bool exist = true;
@@ -357,7 +393,7 @@ noAccount:
         sscanf(countNumber, "%d", &r.accountNbr);
         while (getAccountFromFile(pf, userName, &cr))
         {
-            if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
+            if (cr.accountNbr == r.accountNbr)
             {
                 printf("✖ This Account already exists for this user\n\n");
                 validnumber = false;
