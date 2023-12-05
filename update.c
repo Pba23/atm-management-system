@@ -30,7 +30,7 @@ void updateAccountMenu(struct User u)
 t:
     system("clear");
 
-    printf("\t\t====== Update account, %s =====\n\n", u.name);
+    printf("\t\t====== Update an account for you %s =====\n\n", u.name);
     printf("%s", error);
     do
     {

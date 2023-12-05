@@ -7,71 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-void mainMenu(struct User u)
-{
-    int option;
-    char input[50]; // Chaine de caractères pour stocker l'entrée utilisateur
-
-    while (1)
-    {
-        system("clear");
-        printf("\n\n\t\t======= ATM ======= %d \n\n", u.id);
-        printf("\n\t\t-->> Feel free to choose one of the options below <<--\n");
-        printf("\n\t\t[1]- Create a new account\n");
-        printf("\n\t\t[2]- Update account information\n");
-        printf("\n\t\t[3]- Check accounts\n");
-        printf("\n\t\t[4]- Check list of owned account\n");
-        printf("\n\t\t[5]- Make Transaction\n");
-        printf("\n\t\t[6]- Remove existing account\n");
-        printf("\n\t\t[7]- Transfer ownership\n");
-        printf("\n\t\t[8]- Exit\n");
-        printf("\nEnter your choice: ");
-
-        if (fgets(input, sizeof(input), stdin))
-        {
-            input[strcspn(input, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
-
-            if (isNumber(input))
-            {
-                option = atoi(input); // Convertir la chaîne en entier
-                switch (option)
-                {
-                case 1:
-                    createNewAcc(u);
-                    break;
-                case 2:
-                    updateAccountMenu(u);
-                    break;
-                case 3:
-                    countDetail(u);
-                    break;
-                case 4:
-                    checkAllAccounts(u);
-                    break;
-                case 5:
-                    transactionMenu(u);
-                    break;
-                case 6:
-                    removeAccount(u);
-                    break;
-                case 7:
-                    transferOwner(u);
-                    break;
-                case 8:
-                    exit(0); // Utilisation de 0 pour une sortie propre
-                    break;
-                default:
-                    printf("Invalid operation!\n");
-                }
-            }
-            else
-            {
-                printf("Please enter a valid number.\n");
-            }
-        }
-    }
-}
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -113,16 +48,16 @@ void initMenu(struct User *u)
             {
             case 1:
                 loginMenu(u->name, u->password);
-                if (strcmp(u->password, getPassword(*u)) == 0)
-                {
-                    printf("\n\nPassword Match!\n");
-                }
-                else
-                {
-                    printf("\nWrong password or User Name\n");
+                // if (strcmp(u->password, getPassword(*u)) == 0)
+                // {
+                //     printf("\n\nPassword Match!\n");
+                // }
+                // else
+                // {
+                //     printf("\nWrong password or User Name\n");
 
-                    exit(1);
-                }
+                //     exit(1);
+                // }
                 r = 1;
                 break;
             case 2:
@@ -140,6 +75,74 @@ void initMenu(struct User *u)
         else
         {
             printf("Choose a valid option: ");
+        }
+    }
+}
+void mainMenu(struct User u)
+{
+    int option;
+    char input[50]; // Chaine de caractères pour stocker l'entrée utilisateur
+
+    while (1)
+    {
+        system("clear");
+        printf("\n\n\t\t======= Welcom to our bank Mr(s) %s =======  \n\n", u.name);
+        printf("\n\t\t-->> Feel free to choose one of the options below <<--\n");
+        printf("\n\t\t[1]- Create a new account\n");
+        printf("\n\t\t[2]- Update account information\n");
+        printf("\n\t\t[3]- Check accounts\n");
+        printf("\n\t\t[4]- Check list of owned account\n");
+        printf("\n\t\t[5]- Make Transaction\n");
+        printf("\n\t\t[6]- Remove existing account\n");
+        printf("\n\t\t[7]- Transfer ownership\n");
+        printf("\n\t\t[8]- Exit\n");
+        printf("\n\t\t[9]- Log out\n");
+        printf("\nEnter your choice: ");
+
+        if (fgets(input, sizeof(input), stdin))
+        {
+            input[strcspn(input, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
+
+            if (isNumber(input))
+            {
+                option = atoi(input); // Convertir la chaîne en entier
+                switch (option)
+                {
+                case 1:
+                    createNewAcc(u);
+                    break;
+                case 2:
+                    updateAccountMenu(u);
+                    break;
+                case 3:
+                    countDetail(u);
+                    break;
+                case 4:
+                    checkAllAccounts(u);
+                    break;
+                case 5:
+                    transactionMenu(u);
+                    break;
+                case 6:
+                    removeAccount(u);
+                    break;
+                case 7:
+                    transferOwner(u);
+                    break;
+                case 8:
+                    exit(0); // Utilisation de 0 pour une sortie propre
+                    break;
+                case 9:
+                    initMenu(&u);
+                    break;
+                default:
+                    printf("Invalid operation!\n");
+                }
+            }
+            else
+            {
+                printf("Please enter a valid number.\n");
+            }
         }
     }
 }

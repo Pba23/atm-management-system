@@ -43,6 +43,7 @@ void loginMenu(char a[50], char pass[50])
 {
     struct termios oflags, nflags;
     int numUsers;
+    struct User u;
     struct User users[100];
     checkIn(users, &numUsers);
     system("clear");
@@ -94,7 +95,24 @@ void loginMenu(char a[50], char pass[50])
         }
         else
         {
-            break;
+            for (int i = 0; i < numUsers; i++)
+            {
+                if (strcmp(users[i].name, a) == 0)
+                {
+                    u.id = users[i].id;
+                }
+                strcpy(u.name, a);
+                strcpy(u.password, pass);
+            }
+            if (strcmp(pass, getPassword(u)) == 0)
+            {
+                printf("\n\nPassword Match!\n");
+                break;
+            }
+            else
+            {
+                printf("\nWrong password. Please Try again\n");
+            }
         }
     }
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)

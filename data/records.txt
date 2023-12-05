@@ -5,3 +5,5 @@
 4 1 Michel 45 12/12/1245 mali -763225499 45698.00 saving
 5 0 Alice 46 12/12/1456 sdfghjk 57268 4564.00 fixed01
 6 0 Alice 47 12/14/2459 senegal 14658 4523.00 saving
+7 3 nixa 456 12/12/1245 mlkjh 25625 5645.00 saving
+8 0 Alice 49 11/12/1452 fghjk 452658 4567.00 current

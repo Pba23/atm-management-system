@@ -348,7 +348,7 @@ void createNewAcc(struct User u)
     int re = 0;
 
     system("clear");
-    printf("\t\t\t===== New record ===== n = %s\n",u.name);
+    printf("\t\t\t===== New record for user  %s ======\n",u.name);
     // recuperation de la date
     bool validDate = false;
     while (!validDate)
@@ -395,7 +395,7 @@ noAccount:
         {
             if (cr.accountNbr == r.accountNbr)
             {
-                printf("✖ This Account already exists for this user\n\n");
+                printf("✖ This Account already exists. May you take another please?\n\n");
                 validnumber = false;
                 goto noAccount;
             }
@@ -495,7 +495,7 @@ void checkAllAccounts(struct User u)
     FILE *pf = fopen(RECORDS, "r");
 
     system("clear");
-    printf("\t\t====== All accounts from user, %s =====\n\n", u.name);
+    printf("\t\t====== All accounts from user %s =====\n\n", u.name);
     while (getAccountFromFile(pf, userName, &r))
     {
         if (strcmp(userName, u.name) == 0)
@@ -625,7 +625,7 @@ void countDetail(struct User u)
     int id;
     int count = 0;
     system("clear");
-    printf("\t\t====== Account datail =====\n\n");
+    printf("\t\t====== Account datail for user %s=====\n\n", u.name);
     printf("%s", error);
     do
     {
@@ -738,6 +738,7 @@ void removeAccount(struct User u)
     getAllRecords(AllRecords, &numRecords);
 
     system("clear");
+    printf("\n\t\t\t====Remove account menu for user %s\n",u.name);
     do
     {
         printf("\n\n\t\tEnter the number of the count to remove : ");

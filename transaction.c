@@ -15,7 +15,7 @@ void transactionMenu(struct User u)
     do
     {
         system("clear");
-        printf("\n\t\t\t====Transaction Menu\n");
+        printf("\n\t\t\t====Transaction Menu for a account from user %s\n",u.name);
         printf("Enter your account number: ");
         fgets(number, sizeof(number), stdin);
         number[strcspn(number, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
