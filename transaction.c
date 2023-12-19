@@ -170,7 +170,7 @@ void transactionMenu(struct User u)
                         for (int i = 0; i < numRecord; i++)
                         {
 
-                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
                                     r[i].id, r[i].userId, r[i].name, r[i].accountNbr,
                                     r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
                                     r[i].country, r[i].phone, r[i].amount, r[i].accountType);

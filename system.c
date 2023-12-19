@@ -42,7 +42,7 @@ void checkIn1(struct User users[], int *numUsers)
 }
 int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
 {
-    return fscanf(ptr, "%d %d %s %d %d/%d/%d %s %d %lf %s",
+    return fscanf(ptr, "%d %d %s %d %d/%d/%d %s %s %lf %s",
                   &r->id,
                   &r->userId,
                   name,
@@ -51,7 +51,7 @@ int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
                   &r->deposit.day,
                   &r->deposit.year,
                   r->country,
-                  &r->phone,
+                  r->phone,
                   &r->amount,
                   r->accountType) != EOF;
 }
@@ -93,7 +93,7 @@ void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
        }
     }
     
-    fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+    fprintf(ptr, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
             r.id,
             u.id,
             u.name,
@@ -211,7 +211,7 @@ void getAllRecords(struct Record AllRecords[], int *numRecords)
     }
 
     // Lire les données du fichier
-    while (fscanf(fp, "%d %d %99s %d %d/%d/%d %99s %d %lf %9s",
+    while (fscanf(fp, "%d %d %99s %d %d/%d/%d %99s %s %lf %9s",
                   &AllRecords[count].id,
                   &AllRecords[count].userId,
                   AllRecords[count].name,
@@ -220,7 +220,7 @@ void getAllRecords(struct Record AllRecords[], int *numRecords)
                   &AllRecords[count].deposit.month,
                   &AllRecords[count].deposit.year,
                   AllRecords[count].country,
-                  &AllRecords[count].phone,
+                  AllRecords[count].phone,
                   &AllRecords[count].amount,
                   AllRecords[count].accountType) == 11)
     {
@@ -421,7 +421,6 @@ noAccount:
     }
 
     bool validPhone = false;
-    int phone;
     while (!validPhone)
     {
         printf("\nEnter the phone number (up to 15 digits with no spaces): ");
@@ -437,7 +436,7 @@ noAccount:
         {
             printf("Please enter a valid phone number, up to 15 digits with no spaces.\n");
         }
-        r.phone = atoi(phoneNumber);
+        strcpy(r.phone,phoneNumber);
         
     }
     char amountInput[20]; // Pour stocker la saisie du montant
@@ -501,7 +500,7 @@ void checkAllAccounts(struct User u)
         if (strcmp(userName, u.name) == 0)
         {
             printf("_____________________\n");
-            printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%d \nAmount deposited: $%.2f \nType Of Account:%s\n",
+            printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%s \nAmount deposited: $%.2f \nType Of Account:%s\n",
                    r.accountNbr,
                    r.deposit.day,
                    r.deposit.month,
@@ -531,14 +530,14 @@ void changeCountry(struct Record AllRecords[], int numRecords, char country[100]
     {
         if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountNumber)
         {
-            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+            fprintf(fp, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
                     AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
                     AllRecords[i].deposit.day, AllRecords[i].deposit.month, AllRecords[i].deposit.year,
                     country, AllRecords[i].phone, AllRecords[i].amount, AllRecords[i].accountType);
         }
         else
         {
-            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+            fprintf(fp, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
                     AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
                     AllRecords[i].deposit.day, AllRecords[i].deposit.month, AllRecords[i].deposit.year,
                     AllRecords[i].country, AllRecords[i].phone, AllRecords[i].amount, AllRecords[i].accountType);
@@ -547,7 +546,7 @@ void changeCountry(struct Record AllRecords[], int numRecords, char country[100]
 
     fclose(fp);
 }
-void changeNumber(struct Record AllRecords[], int numRecords, int number, struct User u, int accountNumber)
+void changeNumber(struct Record AllRecords[], int numRecords, char number[20], struct User u, int accountNumber)
 {
     FILE *fp;
     char filename[] = "./data/records.txt";
@@ -562,14 +561,14 @@ void changeNumber(struct Record AllRecords[], int numRecords, int number, struct
     {
         if (strcmp(AllRecords[i].name, u.name) == 0 && AllRecords[i].accountNbr == accountNumber)
         {
-            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+            fprintf(fp, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
                     AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
                     AllRecords[i].deposit.day, AllRecords[i].deposit.month, AllRecords[i].deposit.year,
                     AllRecords[i].country, number, AllRecords[i].amount, AllRecords[i].accountType);
         }
         else
         {
-            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+            fprintf(fp, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
                     AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
                     AllRecords[i].deposit.day, AllRecords[i].deposit.month, AllRecords[i].deposit.year,
                     AllRecords[i].country, AllRecords[i].phone, AllRecords[i].amount, AllRecords[i].accountType);
@@ -660,7 +659,7 @@ void countDetail(struct User u)
                     printf("Account number: %d\n", r.accountNbr);
                     printf("Deposit Date: %d/%d/%d\n", r.deposit.day, r.deposit.month, r.deposit.year);
                     printf("Country: %s\n", r.country);
-                    printf("Phone number: %d\n", r.phone);
+                    printf("Phone number: %s\n", r.phone);
                     printf("Amount deposited: %.2f\n", r.amount);
                     printf("Type Of Account : %s\n", r.accountType);
                     interestMessage(r);
@@ -794,7 +793,7 @@ void removeAccount(struct User u)
                     }
                     else
                     {
-                        fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                        fprintf(fp, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
                                 AllRecords[i].id, AllRecords[i].userId, AllRecords[i].name, AllRecords[i].accountNbr,
                                 AllRecords[i].deposit.day, AllRecords[i].deposit.month, AllRecords[i].deposit.year,
                                 AllRecords[i].country, AllRecords[i].phone, AllRecords[i].amount, AllRecords[i].accountType);

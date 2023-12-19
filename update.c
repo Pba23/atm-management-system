@@ -109,9 +109,9 @@ t:
                                         printf("Please enter a valid phone number, up to 15 digits with no spaces.\n");
                                     }
                                 }
-                                phone = atoi(phoneNumber);
+                               
                                 getAllRecords(AllRecords, &numRecords);
-                                changeNumber(AllRecords, numRecords, phone, u, id);
+                                changeNumber(AllRecords, numRecords, phoneNumber, u, id);
                                 // success(u);
 
                                 do
@@ -167,7 +167,7 @@ t:
 
                                 do
                                 {
-                                    printf("\n\t\tEnter 0 to try again, 1 to return to the main menu, or 2 to exit: ");
+                                    printf("\n\t\t 1 to return to the main menu, or 2 to exit: ");
                                     if (scanf("%d", &choice) != 1)
                                     {
                                         printf("\nInvalid input. Please enter a valid option.\n");

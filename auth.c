@@ -237,6 +237,7 @@ void transferOwner(struct User u)
     struct User users[100];
     int numUsers;
     char username[50];
+    int newID;
     getAllRecords(r, &numRecords);
     system("clear");
     do
@@ -271,7 +272,7 @@ void transferOwner(struct User u)
                     printf("Account number: %d\n", r[i].accountNbr);
                     printf("Deposit Date: %d/%d/%d\n", r[i].deposit.day, r[i].deposit.month, r[i].deposit.year);
                     printf("Country: %s\n", r[i].country);
-                    printf("Phone number: %d\n", r[i].phone);
+                    printf("Phone number: %s\n", r[i].phone);
                     printf("Amount deposited: %.2f\n", r[i].amount);
                     printf("Type Of Account : %s\n", r[i].accountType);
                 }
@@ -303,18 +304,23 @@ void transferOwner(struct User u)
                         printf("Error oppenning file : %s\n", filename);
                         return;
                     }
+                    for (int i = 0; i < numUsers; i++){
+                        if (strcmp(users[i].name, username) == 0){
+                            newID=users[i].id;
+                        }
+                    }
                     for (int i = 0; i < numRecords; i++)
                     {
                         if (strcmp(r[i].name, u.name) == 0 && r[i].accountNbr == accountID)
                         {
-                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
-                                    r[i].id, r[i].userId, username, r[i].accountNbr,
+                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
+                                    r[i].id, newID, username, r[i].accountNbr,
                                     r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
                                     r[i].country, r[i].phone, r[i].amount, r[i].accountType);
                         }
                         else
                         {
-                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n",
+                            fprintf(fp, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
                                     r[i].id, r[i].userId, r[i].name, r[i].accountNbr,
                                     r[i].deposit.day, r[i].deposit.month, r[i].deposit.year,
                                     r[i].country, r[i].phone, r[i].amount, r[i].accountType);
