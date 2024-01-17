@@ -15,7 +15,7 @@ void transactionMenu(struct User u)
     do
     {
         system("clear");
-        printf("\n\t\t\t====Transaction Menu for a account from user %s\n",u.name);
+        printf("\n\t\t\t%s====Transaction Menu for a account from user %s%s\n",CYAN,u.name,RESET);
         printf("Enter your account number: ");
         fgets(number, sizeof(number), stdin);
         number[strcspn(number, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
@@ -50,10 +50,10 @@ void transactionMenu(struct User u)
                         do
                         {
 
-                            printf("[1]. Make a deposit\n");
-                            printf("[2]. Make a withdrawal\n");
-                            printf("[3]. Return to Main Menu\n");
-                            printf("[4]. Exit\n");
+                            printf("%s[1]. Make a deposit\n",GREEN);
+                            printf("[2]. Make a withdrawal%s\n",RESET);
+                            printf("%s[3]. Return to Main Menu%s\n",BLUE,RESET);
+                            printf("%s[4]. Exit%s\n",RED,RESET);
                             printf("Enter your choice: ");
                             fgets(choiceStr, sizeof(choiceStr), stdin);
                             choiceStr[strcspn(choiceStr, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
@@ -183,7 +183,7 @@ void transactionMenu(struct User u)
                     }
                     else
                     {
-                        printf("\n\t\tError you are not allowed to do transaction beacause your are %s\n", r[i].accountType);
+                        printf("\n\t\t%sError you are not allowed to do transaction beacause your are %s%s\n", RED,r[i].accountType, RESET);
                         stayOrQuit(u);
                     }
                     count++;

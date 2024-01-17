@@ -3,6 +3,17 @@
 #include <stdbool.h>
 #include <ctype.h>
 const char *RECORDS = "./data/records.txt";
+
+//Colors:
+
+#define RED "\033[1;31m"
+#define GREEN "\033[1;32m"
+#define YELLOW "\033[1;33m"
+#define BLUE "\033[1;34m"
+#define MAGENTA "\033[1;35m"
+#define CYAN "\033[1;36m"
+#define RESET "\033[0m"
+
 int isNumber(const char *input)
 {
     while (*input)
@@ -178,7 +189,7 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u)
 void success(struct User u)
 {
     int option;
-    printf("\n✔ Success !\n\n");
+    printf("\n%s✔ Success !%s\n\n",GREEN,RESET);
 invalid:
     printf("Enter 1 to go to the main menu and 0 to exit!\n");
     scanf("%d", &option);
@@ -348,7 +359,7 @@ void createNewAcc(struct User u)
     int re = 0;
 
     system("clear");
-    printf("\t\t\t===== New record for user  %s ======\n",u.name);
+    printf("\t\t\t%s===== New record for user  %s ======%s\n",YELLOW,u.name,RESET);
     // recuperation de la date
     bool validDate = false;
     while (!validDate)
@@ -494,13 +505,14 @@ void checkAllAccounts(struct User u)
     FILE *pf = fopen(RECORDS, "r");
 
     system("clear");
-    printf("\t\t====== All accounts from user %s =====\n\n", u.name);
+    printf("\t\t====== %sAll accounts from user %s ====%s/\n\n", YELLOW,u.name,RESET);
     while (getAccountFromFile(pf, userName, &r))
     {
         if (strcmp(userName, u.name) == 0)
         {
             printf("_____________________\n");
-            printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%s \nAmount deposited: $%.2f \nType Of Account:%s\n",
+            printf("\n%sAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%s \nAmount deposited: $%.2f \nType Of Account:%s%s\n",
+                    GREEN,
                    r.accountNbr,
                    r.deposit.day,
                    r.deposit.month,
@@ -508,7 +520,9 @@ void checkAllAccounts(struct User u)
                    r.country,
                    r.phone,
                    r.amount,
-                   r.accountType);
+                   r.accountType,
+                   RESET
+                   );
         }
     }
     fclose(pf);
@@ -583,7 +597,7 @@ void interestMessage(struct Record r)
     float value;
     if (strcmp(r.accountType, "current") == 0)
     {
-        printf("You will not get interests because the account is of type current");
+        printf("%sYou will not get interests because the account is of type current%s",RED,RESET);
     }
     else
     {
@@ -592,25 +606,25 @@ void interestMessage(struct Record r)
         {
             interest = 0.07;
             value = r.amount * interest / 12;
-            printf("You will get $%.2f as interest on day %d of every month", value, r.deposit.day);
+            printf("%sYou will get $%.2f as interest on day %d of every month%s", GREEN, value, r.deposit.day,RESET);
         }
         else if (strcmp(r.accountType, "fixed01") == 0)
         {
             interest = 0.04;
             value = r.amount * interest;
-            printf("You will get $%.2f as interest on %d/%d/%d of every month", value, r.deposit.day, r.deposit.month, r.deposit.year + 1);
+            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 1,RESET);
         }
         else if (strcmp(r.accountType, "fixed02") == 0)
         {
             interest = 0.05;
             value = r.amount * interest * 2;
-            printf("You will get $%.2f as interest on %d/%d/%d of every month", value, r.deposit.day, r.deposit.month, r.deposit.year + 2);
+            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 2,RESET);
         }
         else if (strcmp(r.accountType, "fixed03") == 0)
         {
             interest = 0.08;
             value = r.amount * interest * 3;
-            printf("You will get $%.2f as interest on %d/%d/%d of every month", value, r.deposit.day, r.deposit.month, r.deposit.year + 3);
+            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 3,RESET);
         }
     }
 }
@@ -624,7 +638,7 @@ void countDetail(struct User u)
     int id;
     int count = 0;
     system("clear");
-    printf("\t\t====== Account datail for user %s=====\n\n", u.name);
+    printf("\t\t%s====== Account datail for user %s=====%s\n\n",BLUE,u.name,RESET);
     printf("%s", error);
     do
     {
@@ -645,7 +659,7 @@ void countDetail(struct User u)
         }
         if (!isvalid)
         {
-            printf("Invalid input. Please enter a valid option.\n");
+            printf("%s,Invalid input. Please enter a valid option.\n",RED);
             // while (getchar() != '\n')
             //     ; // Vide le tampon d'entrée
         }
@@ -656,12 +670,12 @@ void countDetail(struct User u)
             {
                 if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
                 {
-                    printf("Account number: %d\n", r.accountNbr);
+                    printf("%sAccount number: %d\n",YELLOW, r.accountNbr);
                     printf("Deposit Date: %d/%d/%d\n", r.deposit.day, r.deposit.month, r.deposit.year);
                     printf("Country: %s\n", r.country);
                     printf("Phone number: %s\n", r.phone);
                     printf("Amount deposited: %.2f\n", r.amount);
-                    printf("Type Of Account : %s\n", r.accountType);
+                    printf("Type Of Account : %s%s\n", r.accountType,RESET);
                     interestMessage(r);
                     stayOrQuit(u);
                     count++;

@@ -10,6 +10,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define RED "\033[1;31m"
+#define GREEN "\033[1;32m"
+#define YELLOW "\033[1;33m"
+#define BLUE "\033[1;34m"
+#define MAGENTA "\033[1;35m"
+#define CYAN "\033[1;36m"
+#define RESET "\033[0m"
 
 void initMenu(struct User *u)
 {
@@ -17,11 +24,11 @@ void initMenu(struct User *u)
     char input[10]; // Tableau de caractères pour stocker l'entrée de l'utilisateur
 
     system("clear");
-    printf("\n\n\t\t======= ATM =======\n");
-    printf("\n\t\t-->> Feel free to login / register :\n");
-    printf("\n\t\t[1]- login\n");
-    printf("\n\t\t[2]- register\n");
-    printf("\n\t\t[3]- exit\n");
+    printf("%s\n\n\t\t======= ATM =======%s\n",CYAN,RESET);
+    printf("%s\n\t\t-->> Feel free to login / register :%s\n",MAGENTA,RESET);
+    printf("%s\n\t\t[1]- login%s\n",GREEN,RESET);
+    printf("%s\n\t\t[2]- register%s\n",GREEN,RESET);
+    printf("%s\n\t\t[3]- exit%s\n",RED,RESET);
 
     printf("Choose an option: ");
     while (!r)
@@ -86,17 +93,17 @@ void mainMenu(struct User u)
     while (1)
     {
         system("clear");
-        printf("\n\n\t\t======= Welcom to our bank Mr(s) %s =======  \n\n", u.name);
-        printf("\n\t\t-->> Feel free to choose one of the options below <<--\n");
-        printf("\n\t\t[1]- Create a new account\n");
-        printf("\n\t\t[2]- Update account information\n");
-        printf("\n\t\t[3]- Check accounts\n");
-        printf("\n\t\t[4]- Check list of owned account\n");
-        printf("\n\t\t[5]- Make Transaction\n");
-        printf("\n\t\t[6]- Remove existing account\n");
-        printf("\n\t\t[7]- Transfer ownership\n");
-        printf("\n\t\t[8]- Exit\n");
-        printf("\n\t\t[9]- Log out\n");
+        printf("\n\n\t\t%s======= Welcome to our bank, Mr(s) %s =======%s\n\n", CYAN, u.name, RESET);
+        printf("\n\t\t%s-->> Feel free to choose one of the options below <<--%s\n", MAGENTA, RESET);
+        printf("\n\t\t%s[1]- Create a new account%s\n", GREEN, RESET);
+        printf("\n\t\t%s[2]- Update account information%s\n", GREEN, RESET);
+        printf("\n\t\t%s[3]- Check accounts%s\n", GREEN, RESET);
+        printf("\n\t\t%s[4]- Check list of owned accounts%s\n", GREEN, RESET);
+        printf("\n\t\t%s[5]- Make Transaction%s\n", GREEN, RESET);
+        printf("\n\t\t%s[6]- Remove existing account%s\n", GREEN, RESET);
+        printf("\n\t\t%s[7]- Transfer ownership%s\n", GREEN, RESET);
+        printf("\n\t\t%s[8]- Exit%s\n", RED, RESET);
+        printf("\n\t\t%s[9]- Log out%s\n", RED, RESET);
         printf("\nEnter your choice: ");
 
         if (fgets(input, sizeof(input), stdin))
