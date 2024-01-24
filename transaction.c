@@ -134,7 +134,6 @@ void transactionMenu(struct User u)
                                         {
                                             // La saisie n'est pas un nombre valide, demandez de ressaisir
                                             printf("Invalid input. Please enter a valid amount amount.\n");
-                                            while (getchar() != '\n')
                                                 ; // Vide le tampon d'entrée
                                         }
                                     } while (!validInput);
