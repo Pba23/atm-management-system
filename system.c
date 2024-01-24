@@ -402,15 +402,7 @@ noAccount:
         }
 
         sscanf(countNumber, "%d", &r.accountNbr);
-        while (getAccountFromFile(pf, userName, &cr))
-        {
-            if (cr.accountNbr == r.accountNbr)
-            {
-                printf("✖ This Account already exists. May you take another please?\n\n");
-                validnumber = false;
-                goto noAccount;
-            }
-        }
+        
     }
     bool validcountry = false;
     while (!validcountry)
@@ -488,6 +480,15 @@ noAccount:
             break;
         }
     } while (1);
+    while (getAccountFromFile(pf, userName, &cr))
+        {
+            if (cr.accountNbr == r.accountNbr)
+            {
+                printf("✖ This Account already exists. May you take another please?\n\n");
+                validnumber = false;
+                stayOrQuit(u);
+            }
+        }
 
     getAllRecords(AllRecords, &num);
     r.id = num;
