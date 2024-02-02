@@ -2,7 +2,7 @@
 #include "header.h"
 #include <stdio.h>
 
-//Colors:
+// Colors:
 
 #define RED "\033[1;31m"
 #define GREEN "\033[1;32m"
@@ -61,7 +61,7 @@ void loginMenu(char a[50], char pass[50])
     while (1)
     {
 
-        printf("\n\n\n\t\t\t\t   %sBank Management System\n\t\t\t\t %s  ======User Login======%s",CYAN,MAGENTA,RESET);
+        printf("\n\n\n\t\t\t\t   %sBank Management System\n\t\t\t\t %s  ======User Login======%s", CYAN, MAGENTA, RESET);
         char input[50];
         printf("\n\n\n\n\n\t\t\t\tEnter your name:");
         fgets(input, sizeof(input), stdin);
@@ -216,16 +216,18 @@ void registerMenu(char a[50], char pass[50])
 
     while (1)
     {
+        char input1[50];
         printf("\n\n\n\n\n\t\t\t\tEnter your password:");
-        fgets(pass, sizeof(&pass), stdin);
-        pass[strcspn(pass, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+        fgets(input1, sizeof(input1), stdin);
+        input1[strcspn(input1, "\n")] = '\0';
 
-        if (strchr(pass, ' ') != NULL)
+        if (strchr(input1, ' ') != NULL || !isValidCountry(input1))
         {
-            printf("\n\nThe password should not contain a space. Try again.\n");
+            printf("\n\nThe password should contains up to 15 letter with no spaces.\n. Try again.\n");
         }
         else
         {
+            strcpy(pass, input1);
             break;
         }
     }
@@ -315,9 +317,11 @@ void transferOwner(struct User u)
                         printf("Error oppenning file : %s\n", filename);
                         return;
                     }
-                    for (int i = 0; i < numUsers; i++){
-                        if (strcmp(users[i].name, username) == 0){
-                            newID=users[i].id;
+                    for (int i = 0; i < numUsers; i++)
+                    {
+                        if (strcmp(users[i].name, username) == 0)
+                        {
+                            newID = users[i].id;
                         }
                     }
                     for (int i = 0; i < numRecords; i++)
