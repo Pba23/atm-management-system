@@ -4,7 +4,7 @@
 #include <ctype.h>
 const char *RECORDS = "./data/records.txt";
 
-//Colors:
+// Colors:
 
 #define RED "\033[1;31m"
 #define GREEN "\033[1;32m"
@@ -94,16 +94,17 @@ bool isValidAmount(const char *amount)
 }
 void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
 {
-    struct User users [50];
+    struct User users[50];
     int num;
-    checkIn1(users,&num);
+    checkIn1(users, &num);
     for (int i = 0; i < num; i++)
     {
-       if (strcmp(users[i].name,u.name)==0){
-        u.id = users[i].id;
-       }
+        if (strcmp(users[i].name, u.name) == 0)
+        {
+            u.id = users[i].id;
+        }
     }
-    
+
     fprintf(ptr, "%d %d %s %d %d/%d/%d %s %s %.2lf %s\n",
             r.id,
             u.id,
@@ -188,24 +189,76 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u)
 
 void success(struct User u)
 {
-    int option;
-    printf("\n%s✔ Success !%s\n\n",GREEN,RESET);
+
+    printf("\n%s✔ Success !%s\n\n", GREEN, RESET);
 invalid:
+    int option;
+    char optionstr[50];
     printf("Enter 1 to go to the main menu and 0 to exit!\n");
-    scanf("%d", &option);
-    system("clear");
-    if (option == 1)
+    if (fgets(optionstr, sizeof(optionstr), stdin))
     {
-        mainMenu(u);
+        optionstr[strcspn(optionstr, "\n")] = '\0';
+        option = atoi(optionstr);
+        if (isNumber(optionstr))
+        {
+
+            if (option == 1)
+            {
+                mainMenu(u);
+            }
+            else if (option == 0)
+            {
+                exit(1);
+            }
+            else
+            {
+                printf("Insert a valid operation!\n");
+                goto invalid;
+            }
+        }
+        else
+        {
+            printf("Insert a valid input!\noption: %s\n", optionstr);
+            // strcpy(optionstr,"");
+            goto invalid;
+        }
     }
-    else if (option == 0)
+}
+void Fail(struct User u)
+{
+
+    printf("\n%s ✖Fail when creating account due to insisting with invalid inputs !%s\n\n", RED, RESET);
+invalid:
+    int option;
+    char optionstr[50];
+    printf("Enter 1 to go to the main menu and 0 to exit!\n");
+    if (fgets(optionstr, sizeof(optionstr), stdin))
     {
-        exit(1);
-    }
-    else
-    {
-        printf("Insert a valid operation!\n");
-        goto invalid;
+        optionstr[strcspn(optionstr, "\n")] = '\0';
+        option = atoi(optionstr);
+        if (isNumber(optionstr))
+        {
+
+            if (option == 1)
+            {
+                mainMenu(u);
+            }
+            else if (option == 0)
+            {
+                exit(1);
+            }
+            else
+            {
+                printf("Insert a valid operation!\n");
+                goto invalid;
+            }
+        }
+        else
+        {
+            printf("Insert a valid input!\noption: %s\n", optionstr);
+            // strcpy(optionstr,"");
+            goto invalid;
+        }
     }
 }
 void getAllRecords(struct Record AllRecords[], int *numRecords)
@@ -350,16 +403,16 @@ void createNewAcc(struct User u)
     struct Record AllRecords[100];
     int num;
     struct Record cr;
-    char userName[50];
+    char userName[10000];
     FILE *pf = fopen(RECORDS, "a+");
-    char phoneNumber[20];
-    char countNumber[20];
-    char country[20];
-    char dateInput[15]; // Chaine pour stocker la saisie de la date
+    char phoneNumber[10000];
+    char countNumber[10000];
+    char country[10000];
+    char dateInput[10000]; // Chaine pour stocker la saisie de la date
     int re = 0;
 
     system("clear");
-    printf("\t\t\t%s===== New record for user  %s ======%s\n",YELLOW,u.name,RESET);
+    printf("\t\t\t%s===== New record for user  %s ======%s\n", YELLOW, u.name, RESET);
     // recuperation de la date
     bool validDate = false;
     while (!validDate)
@@ -391,7 +444,7 @@ noAccount:
         if (fgets(countNumber, sizeof(countNumber), stdin))
         {
             countNumber[strcspn(countNumber, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
-            if (isValidNumber(countNumber))
+            if (isValidNumber(countNumber)&&strlen(countNumber) <= 10)
             {
                 validnumber = true;
             }
@@ -402,7 +455,6 @@ noAccount:
         }
 
         sscanf(countNumber, "%d", &r.accountNbr);
-        
     }
     bool validcountry = false;
     while (!validcountry)
@@ -439,8 +491,7 @@ noAccount:
         {
             printf("Please enter a valid phone number, up to 15 digits with no spaces.\n");
         }
-        strcpy(r.phone,phoneNumber);
-        
+        strcpy(r.phone, phoneNumber);
     }
     char amountInput[20]; // Pour stocker la saisie du montant
     do
@@ -451,7 +502,7 @@ noAccount:
         amountInput[strcspn(amountInput, "\n")] = '\0'; // Supprimer le saut de ligne s'il est présent
 
         // Vérification de la validité du montant
-        if (!isValidAmount(amountInput) || atof(amountInput)== 0)
+        if (!isValidAmount(amountInput) || atof(amountInput) == 0)
         {
             printf("Invalid amount. Please enter a valid decimal superior to 0 number.\n");
         }
@@ -476,26 +527,36 @@ noAccount:
         }
         else
         {
-        sscanf(accountTypeInput, "%s", r.accountType);
+            sscanf(accountTypeInput, "%s", r.accountType);
             break;
         }
     } while (1);
     while (getAccountFromFile(pf, userName, &cr))
+    {
+        if (cr.accountNbr == r.accountNbr)
         {
-            if (cr.accountNbr == r.accountNbr)
-            {
-                printf("✖ This Account already exists. May you take another please?\n\n");
-                validnumber = false;
-                stayOrQuit(u);
-            }
+            
+            printf("%s✖ This Account already exists. May you take another please?%s\n\n",RED,RESET);
+            validnumber = false;
+            Fail(u);
+            // stayOrQuit(u);
         }
+    }
 
     getAllRecords(AllRecords, &num);
     r.id = num;
-    saveAccountToFile(pf, u, r);
+    if (isValidDate(r.deposit) && (strlen(r.country) <= 15 && isValidCountry(r.country)) && isValidAmount(amountInput) && !atof(amountInput) == 0 && (strlen(r.phone) <= 15 && isValidNumber(r.phone)))
+    {
 
-    fclose(pf);
-    success(u);
+        saveAccountToFile(pf, u, r);
+
+        fclose(pf);
+        success(u);
+    }else {
+        Fail(u);
+    }
+
+    
 }
 
 void checkAllAccounts(struct User u)
@@ -506,14 +567,14 @@ void checkAllAccounts(struct User u)
     FILE *pf = fopen(RECORDS, "r");
 
     system("clear");
-    printf("\t\t====== %sAll accounts from user %s ====%s/\n\n", YELLOW,u.name,RESET);
+    printf("\t\t====== %sAll accounts from user %s ====%s/\n\n", YELLOW, u.name, RESET);
     while (getAccountFromFile(pf, userName, &r))
     {
         if (strcmp(userName, u.name) == 0)
         {
             printf("_____________________\n");
             printf("\n%sAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%s \nAmount deposited: $%.2f \nType Of Account:%s%s\n",
-                    GREEN,
+                   GREEN,
                    r.accountNbr,
                    r.deposit.day,
                    r.deposit.month,
@@ -522,8 +583,7 @@ void checkAllAccounts(struct User u)
                    r.phone,
                    r.amount,
                    r.accountType,
-                   RESET
-                   );
+                   RESET);
         }
     }
     fclose(pf);
@@ -598,7 +658,7 @@ void interestMessage(struct Record r)
     float value;
     if (strcmp(r.accountType, "current") == 0)
     {
-        printf("%sYou will not get interests because the account is of type current%s",RED,RESET);
+        printf("%sYou will not get interests because the account is of type current%s", RED, RESET);
     }
     else
     {
@@ -607,25 +667,25 @@ void interestMessage(struct Record r)
         {
             interest = 0.07;
             value = r.amount * interest / 12;
-            printf("%sYou will get $%.2f as interest on day %d of every month%s", GREEN, value, r.deposit.day,RESET);
+            printf("%sYou will get $%.2f as interest on day %d of every month%s", GREEN, value, r.deposit.day, RESET);
         }
         else if (strcmp(r.accountType, "fixed01") == 0)
         {
             interest = 0.04;
             value = r.amount * interest;
-            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 1,RESET);
+            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 1, RESET);
         }
         else if (strcmp(r.accountType, "fixed02") == 0)
         {
             interest = 0.05;
             value = r.amount * interest * 2;
-            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 2,RESET);
+            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 2, RESET);
         }
         else if (strcmp(r.accountType, "fixed03") == 0)
         {
             interest = 0.08;
             value = r.amount * interest * 3;
-            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 3,RESET);
+            printf("%sYou will get $%.2f as interest on %d/%d/%d of every month%s", GREEN, value, r.deposit.day, r.deposit.month, r.deposit.year + 3, RESET);
         }
     }
 }
@@ -639,7 +699,7 @@ void countDetail(struct User u)
     int id;
     int count = 0;
     system("clear");
-    printf("\t\t%s====== Account datail for user %s=====%s\n\n",BLUE,u.name,RESET);
+    printf("\t\t%s====== Account datail for user %s=====%s\n\n", BLUE, u.name, RESET);
     printf("%s", error);
     do
     {
@@ -660,7 +720,7 @@ void countDetail(struct User u)
         }
         if (!isvalid)
         {
-            printf("%s,Invalid input. Please enter a valid option.\n",RED);
+            printf("%s,Invalid input. Please enter a valid option.\n", RED);
             // while (getchar() != '\n')
             //     ; // Vide le tampon d'entrée
         }
@@ -671,12 +731,12 @@ void countDetail(struct User u)
             {
                 if (strcmp(userName, u.name) == 0 && id == r.accountNbr)
                 {
-                    printf("%sAccount number: %d\n",YELLOW, r.accountNbr);
+                    printf("%sAccount number: %d\n", YELLOW, r.accountNbr);
                     printf("Deposit Date: %d/%d/%d\n", r.deposit.day, r.deposit.month, r.deposit.year);
                     printf("Country: %s\n", r.country);
                     printf("Phone number: %s\n", r.phone);
                     printf("Amount deposited: %.2f\n", r.amount);
-                    printf("Type Of Account : %s%s\n", r.accountType,RESET);
+                    printf("Type Of Account : %s%s\n", r.accountType, RESET);
                     interestMessage(r);
                     stayOrQuit(u);
                     count++;
@@ -752,7 +812,7 @@ void removeAccount(struct User u)
     getAllRecords(AllRecords, &numRecords);
 
     system("clear");
-    printf("\n\t\t\t====Remove account menu for user %s\n",u.name);
+    printf("\n\t\t\t%s====Remove account menu for user %s%s\n", RED, u.name, RESET);
     do
     {
         printf("\n\n\t\tEnter the number of the count to remove : ");
@@ -771,7 +831,7 @@ void removeAccount(struct User u)
         }
         if (!isvalid)
         {
-            printf("Invalid input. Please enter a valid option.\n");
+            printf("%sInvalid input. Please enter a valid option.%s\n", RED, RESET);
             // Vide le tampon d'entrée
         }
         else
@@ -787,7 +847,7 @@ void removeAccount(struct User u)
 
             if (count == 0)
             {
-                printf("\n\n\t\tThis account id does'nt exist or is'nt yours\n");
+                printf("\n\n\t\t%sThis account id does'nt exist or is'nt yours%s\n", RED, RESET);
                 stayOrQuit(u);
             }
             else
@@ -814,10 +874,12 @@ void removeAccount(struct User u)
                                 AllRecords[i].country, AllRecords[i].phone, AllRecords[i].amount, AllRecords[i].accountType);
                     }
                 }
+
                 fclose(fp);
             }
             {
-                success(u);
+
+                printf("%s✔The count number %d is deleted successfully%s", GREEN, accountID, RESET);
                 stayOrQuit(u);
             }
         }
