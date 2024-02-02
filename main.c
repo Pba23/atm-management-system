@@ -93,17 +93,17 @@ void mainMenu(struct User u)
     while (1)
     {
         system("clear");
-        printf("\n\n\t\t%s======= Welcome to our bank, Mr(s) %s =======%s\n\n", CYAN, u.name, RESET);
-        printf("\n\t\t%s-->> Feel free to choose one of the options below <<--%s\n", MAGENTA, RESET);
-        printf("\n\t\t%s[1]- Create a new account%s\n", GREEN, RESET);
-        printf("\n\t\t%s[2]- Update account information%s\n", GREEN, RESET);
-        printf("\n\t\t%s[3]- Check accounts%s\n", GREEN, RESET);
-        printf("\n\t\t%s[4]- Check list of owned accounts%s\n", GREEN, RESET);
-        printf("\n\t\t%s[5]- Make Transaction%s\n", GREEN, RESET);
-        printf("\n\t\t%s[6]- Remove existing account%s\n", GREEN, RESET);
-        printf("\n\t\t%s[7]- Transfer ownership%s\n", GREEN, RESET);
-        printf("\n\t\t%s[8]- Exit%s\n", RED, RESET);
-        printf("\n\t\t%s[9]- Log out%s\n", RED, RESET);
+        printf("\n\n\t\t%s======= Welcome to our bank, Mr(s) %s =======\n\n", CYAN, u.name);
+        printf("\n\t\t%s-->> Feel free to choose one of the options below <<--\n", MAGENTA);
+        printf("\n\t\t%s[1]- Create a new account\n", GREEN);
+        printf("\n\t\t[2]- Update account information\n");
+        printf("\n\t\t[3]- Check accounts\n");
+        printf("\n\t\t[4]- Check list of owned accounts\n");
+        printf("\n\t\t[5]- Make Transaction\n");
+        printf("\n\t\t[6]- Remove existing account\n");
+        printf("\n\t\t[7]- Transfer ownership\n");
+        printf("\n\t\t%s[8]- Exit\n", RED);
+        printf("\n\t\t[9]- <-- Log out%s\n",RESET);
         printf("\nEnter your choice: ");
 
         if (fgets(input, sizeof(input), stdin))
