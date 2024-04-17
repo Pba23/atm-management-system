@@ -186,7 +186,42 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u)
         exit(1);
     }
 }
+void fail(struct User u)
+{
 
+invalid:
+    int option;
+    char optionstr[50];
+    printf("Enter 1 to go to the main menu and 0 to exit!\n");
+    if (fgets(optionstr, sizeof(optionstr), stdin))
+    {
+        optionstr[strcspn(optionstr, "\n")] = '\0';
+        option = atoi(optionstr);
+        if (isNumber(optionstr))
+        {
+
+            if (option == 1)
+            {
+                mainMenu(u);
+            }
+            else if (option == 0)
+            {
+                exit(1);
+            }
+            else
+            {
+                printf("Insert a valid operation!\n");
+                goto invalid;
+            }
+        }
+        else
+        {
+            printf("Insert a valid input!\noption: %s\n", optionstr);
+            // strcpy(optionstr,"");
+            goto invalid;
+        }
+    }
+}
 void success(struct User u)
 {
 

@@ -1,4 +1,7 @@
 #include "header.h"
+#define RED "\033[1;31m"
+#define RESET "\033[0m"
+
 bool isNumericString2(const char *str)
 {
     while (*str)
@@ -212,8 +215,12 @@ t:
     if (counter == 0)
     {
         // error = "\n✖ Record not found!!\n";
+        printf("%s",RED);
         strcpy(error, "\n✖ account number not found in yours!!\n");
-        updateAccountMenu(u);
+        printf("%s",error);
+        printf("%s",RESET);
+        fail(u);
+        // updateAccountMenu(u);
     }
     
 }
