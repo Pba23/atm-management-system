@@ -70,7 +70,9 @@ bool isValidAmount(const char *amount)
 {
     int len = strlen(amount);
     int dotCount = 0;
-
+    if (atof(amount)>1000000000 || atof(amount)<=0){
+        return 0;
+    }
     for (int i = 0; i < len; ++i)
     {
         if (!isdigit(amount[i]))
@@ -345,6 +347,9 @@ bool isLeapYear(int year)
 bool isValidNumber(const char *accountNumber)
 {
     int len = strlen(accountNumber);
+    if(strlen(accountNumber) == 0){
+        return false;
+    }
     for (int i = 0; i < len; ++i)
     {
         if (!isdigit(accountNumber[i]))
@@ -352,6 +357,7 @@ bool isValidNumber(const char *accountNumber)
             return false; // Contient des caractères non numériques
         }
     }
+
     return true; // Tous les caractères sont des chiffres
 }
 
@@ -466,7 +472,7 @@ void createNewAcc(struct User u)
         }
         if (!validDate)
         {
-            printf("Please enter a valid date in the format 'dd/mm/yyyy'.\n");
+            printf("%s✖Please enter a valid date in the format 'dd/mm/yyyy'.%s\n",RED,RESET);
         }
     }
 noAccount:
@@ -475,7 +481,7 @@ noAccount:
     // bool exist = true;
     while (!validnumber)
     {
-        printf("\nEnter the account number: ");
+        printf("\nEnter the account number : ");
         if (fgets(countNumber, sizeof(countNumber), stdin))
         {
             countNumber[strcspn(countNumber, "\n")] = '\0'; // Retirer le saut de ligne s'il est présent
@@ -486,7 +492,7 @@ noAccount:
         }
         if (!validnumber)
         {
-            printf("Please enter a valid number\n");
+            printf("%s✖Please enter a valid number (strictly beetween 1 and 10 digits)%s\n",RED,RESET);
         }
 
         sscanf(countNumber, "%d", &r.accountNbr);
@@ -505,7 +511,7 @@ noAccount:
         }
         if (!validcountry)
         {
-            printf("Please enter a valid country , up to 15 letter with no spaces.\n");
+            printf("%s✖Please enter a valid country , up to 15 letter with no spaces.%s\n",RED,RESET);
         }
         sscanf(country, "%s", r.country);
     }
@@ -524,11 +530,11 @@ noAccount:
         }
         if (!validPhone)
         {
-            printf("Please enter a valid phone number, up to 15 digits with no spaces.\n");
+            printf("%s✖Please enter a valid phone number, up to 15 digits with no spaces.%s\n",RED,RESET);
         }
         strcpy(r.phone, phoneNumber);
     }
-    char amountInput[20]; // Pour stocker la saisie du montant
+    char amountInput[2000]; // Pour stocker la saisie du montant
     do
     {
         printf("\nEnter amount to deposit: $");
@@ -537,9 +543,9 @@ noAccount:
         amountInput[strcspn(amountInput, "\n")] = '\0'; // Supprimer le saut de ligne s'il est présent
 
         // Vérification de la validité du montant
-        if (!isValidAmount(amountInput) || atof(amountInput) == 0)
+        if (!isValidAmount(amountInput))
         {
-            printf("Invalid amount. Please enter a valid decimal superior to 0 number.\n");
+            printf("%s✖Invalid amount. Please enter a valid decimal superior to 0 number and inferior than 1 000 000 001$.%s\n",RED,RESET);
         }
         else
         {
@@ -558,7 +564,7 @@ noAccount:
         // Vérification de la validité du type de compte
         if (!isValidAccountType(accountTypeInput))
         {
-            printf("Invalid account type. Please choose a valid account type.\n");
+            printf("%s✖Invalid account type. Please choose a valid account type.%s\n",RED,RESET);
         }
         else
         {
@@ -573,7 +579,7 @@ noAccount:
             
             printf("%s✖ This Account already exists. May you take another please?%s\n\n",RED,RESET);
             validnumber = false;
-            Fail(u);
+            fail(u);
             // stayOrQuit(u);
         }
     }

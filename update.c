@@ -18,10 +18,10 @@ char error[50] = "";
 void updateAccountMenu(struct User u)
 {
     int re = 0;
-    char input[10];
-    char number[10];
-    char phoneNumber[20];
-    char userName[100];
+    char input[1000];
+    char number[1000];
+    char phoneNumber[2000];
+    char userName[1000];
     struct Record r;
     int id;
     struct Record AllRecords[100];
@@ -55,7 +55,7 @@ t:
 
         if (!isvalid)
         {
-            printf("Invalid input. Please enter a valid option.\n");
+            printf("✖%sInvalid input. Please enter a valid option.%s\n",RED,RESET);
             // while (getchar() != '\n')
             //     ; // Vide le tampon d'entrée
         }
@@ -109,7 +109,7 @@ t:
                                     }
                                     if (!validPhone)
                                     {
-                                        printf("Please enter a valid phone number, up to 15 digits with no spaces.\n");
+                                        printf("✖%sPlease enter a valid phone number, up to 15 digits with no spaces.%s\n",RED,RESET);
                                     }
                                 }
                                
@@ -122,7 +122,7 @@ t:
                                     printf("\n\t\t1 to return to the main menu, or 2 to exit: ");
                                     if (scanf("%d", &choice) != 1)
                                     {
-                                        printf("\nInvalid input. Please enter a valid option.\n");
+                                        printf("\n✖%sInvalid input. Please enter a valid option.%s\n",RED,RESET);
                                         while (getchar() != '\n')
                                             ;
                                     }
@@ -137,7 +137,7 @@ t:
                                             exit(0);
                                             break;
                                         default:
-                                            printf("Invalid option. Please enter a valid option.\n");
+                                            printf("✖%sInvalid option. Please enter a valid option.%s\n",RED,RESET);
                                             break;
                                         }
                                     }
@@ -160,7 +160,7 @@ t:
                                     }
                                     if (!validcountry)
                                     {
-                                        printf("Please enter a valid country , up to 15 letter with no spaces.\n");
+                                        printf("✖%sPlease enter a valid country , up to 15 letter with no spaces.%s\n",RED,RESET);
                                     }
                                 }
 
@@ -173,7 +173,7 @@ t:
                                     printf("\n\t\t 1 to return to the main menu, or 2 to exit: ");
                                     if (scanf("%d", &choice) != 1)
                                     {
-                                        printf("\nInvalid input. Please enter a valid option.\n");
+                                        printf("\n✖%sInvalid input. Please enter a valid option.%s\n",RED,RESET);
                                         while (getchar() != '\n')
                                             ;
                                     }
@@ -188,7 +188,7 @@ t:
                                             exit(0);
                                             break;
                                         default:
-                                            printf("Invalid option. Please enter a valid option.\n");
+                                            printf("✖%sInvalid option. Please enter a valid option.%s\n",RED,RESET);
                                             break;
                                         }
                                     }
@@ -196,7 +196,7 @@ t:
                                 re = 1;
                                 break;
                             default:
-                                printf("Please choose a valid option: ");
+                                printf("%sPlease choose a valid option:%s ",RED,RESET);
                                 break;
                             }
                         }

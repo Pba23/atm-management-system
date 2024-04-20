@@ -1,8 +1,8 @@
-objects = src/main.o src/system.o src/auth.o
+project = main.c
 
-atm : $(objects)
-	cc -o atm $(objects)
-.o : src/header.h
+atm : $(project)
+	gcc -o atm $(project)
+.o : header.h
 
 clean :
-	rm -f $(objects)
+	rm -f $(project)

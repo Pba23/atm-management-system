@@ -183,7 +183,7 @@ void registerUser(struct User users[], int *numUsers, const char *name, const ch
 
     printf("✔Registration success for the user : %s\n", name);
 }
-void registerMenu(char a[50], char pass[50])
+void registerMenu(char a[5000], char pass[5000])
 {
     struct User users[100]; // Tableau de structures pour stocker les données
     int numUsers = 0;
