@@ -96,9 +96,12 @@ void loginMenu(char a[50], char pass[50])
     }
     while (1)
     {
+        char input[50];
+
         printf("\n\n\n\n\n\t\t\t\tEnter the password to login:");
-        fgets(pass, sizeof(&pass), stdin);
+        fgets(pass, sizeof(input), stdin);
         pass[strcspn(pass, "\n")] = '\0'; // Supprimer le caractère de nouvelle ligne
+        printf("---------------%s", pass);
 
         if (strchr(pass, ' ') != NULL)
         {
@@ -122,7 +125,7 @@ void loginMenu(char a[50], char pass[50])
             }
             else
             {
-                printf("\nWrong password. Please Try again\n");
+                printf("\nWrong password. Please Try again\n%s. ---> %s.", input, getPassword(u));
             }
         }
     }
