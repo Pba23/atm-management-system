@@ -438,6 +438,25 @@ bool isValidCountry(const char *country)
 
     return true;
 }
+bool isValidPass(const char *country)
+{
+    size_t length = strlen(country);
+
+    if (length > 15)
+    {
+        return false; // Dépassement de la longueur maximale
+    }
+
+    for (size_t i = 0; i < length; ++i)
+    {
+        if (!isalpha(country[i]) && !isdigit(country[i]))
+        {
+            return false; // Caractères non alphabétiques (y compris les espaces)
+        }
+    }
+
+    return true;
+}
 void createNewAcc(struct User u)
 {
     struct Record r;

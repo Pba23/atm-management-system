@@ -224,7 +224,7 @@ void registerMenu(char a[5000], char pass[5000])
         fgets(input1, sizeof(input1), stdin);
         input1[strcspn(input1, "\n")] = '\0';
 
-        if (strchr(input1, ' ') != NULL || !isValidCountry(input1))
+        if (strchr(input1, ' ') != NULL || !isValidPass(input1))
         {
             printf("\n\nThe password should contains up to 15 letter with no spaces.\n. Try again.\n");
         }
